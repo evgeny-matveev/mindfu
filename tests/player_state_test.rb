@@ -1,4 +1,6 @@
-require_relative 'test_helper'
+# frozen_string_literal: true
+
+require_relative "test_helper"
 
 module MeditationPlayer
   class PlayerStateTest < Test
@@ -8,7 +10,7 @@ module MeditationPlayer
     end
 
     def teardown
-      @player.stop if @player
+      @player&.stop
     end
 
     def test_initial_state_is_stopped
@@ -56,7 +58,7 @@ module MeditationPlayer
 
     def test_next_track_changes_index
       # Mock audio files to simulate having tracks
-      @player.stub(:audio_files, ['file1.mp3', 'file2.mp3']) do
+      @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
         @state.next
         assert_equal 1, @state.current_index
       end
@@ -64,7 +66,7 @@ module MeditationPlayer
 
     def test_previous_track_wraps_around
       # Mock audio files to simulate having tracks
-      @player.stub(:audio_files, ['file1.mp3', 'file2.mp3']) do
+      @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
         @state.previous
         assert_equal 1, @state.current_index
       end
@@ -73,10 +75,10 @@ module MeditationPlayer
     def test_state_machine_has_all_expected_states
       # Test that we can transition to all expected states
       @state.play
-      assert_includes ["playing", "paused", "stopped"], @state.state.to_s
+      assert_includes %w[playing paused stopped], @state.state.to_s
 
       @state.pause if @state.state.to_s == "playing"
-      assert_includes ["playing", "paused", "stopped"], @state.state.to_s
+      assert_includes %w[playing paused stopped], @state.state.to_s
 
       @state.stop
       assert_equal "stopped", @state.state.to_s
@@ -84,7 +86,7 @@ module MeditationPlayer
 
     def test_state_machine_has_all_expected_events
       # Test that all expected events can be called
-      [:play, :pause, :resume, :stop, :next, :previous].each do |event|
+      %i[play pause resume stop next previous].each do |event|
         assert_respond_to @state, event
       end
     end

@@ -42,7 +42,17 @@ A minimal TUI meditation audio player built with Ruby.
 ## Running Tests
 
 ```bash
-bundle exec rake test
+# Run all tests (simplest)
+ruby test_all.rb
+
+# Alternative ways to run all tests
+find tests -name "*_test.rb" -exec ruby -Ilib {} \;
+ruby -Ilib tests/*_test.rb
+
+# Run specific test file
+ruby -Ilib tests/audio_player_test.rb
+ruby -Ilib tests/player_state_test.rb
+ruby -Ilib tests/state_persistence_test.rb
 ```
 
 ## Documentation

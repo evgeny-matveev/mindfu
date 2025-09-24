@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MeditationPlayer
   # Audio playback controller using ffplay
   # Handles audio file operations and process management
@@ -9,7 +11,7 @@ module MeditationPlayer
   # @since 1.0.0
   class AudioPlayer
     # Directory containing audio files
-    AUDIO_DIR = File.join(__dir__, '..', 'audio_files').freeze
+    AUDIO_DIR = File.join(__dir__, "..", "audio_files").freeze
 
     # Initialize a new audio player
     #
@@ -24,7 +26,7 @@ module MeditationPlayer
     #
     # @return [Array<String>] array of audio file paths
     def audio_files
-      @audio_files ||= Dir.glob(File.join(AUDIO_DIR, '*.{mp3,mp4,wav,ogg}')).sort
+      @audio_files ||= Dir.glob(File.join(AUDIO_DIR, "*.{mp3,mp4,wav,ogg}"))
     end
 
     # Play the specified audio file
@@ -37,8 +39,8 @@ module MeditationPlayer
       stop if playing?
       @current_file = file_path
       @paused = false
-      @process = spawn('ffplay', '-nodisp', '-autoexit', '-loglevel', 'quiet', file_path,
-                        pgroup: true, [:out, :err] => '/dev/null')
+      @process = spawn("ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", file_path,
+                       :pgroup => true, %i[out err] => "/dev/null")
     end
 
     # Stop currently playing audio
@@ -48,7 +50,7 @@ module MeditationPlayer
       return unless @process
 
       begin
-        Process.kill('-TERM', -@process)
+        Process.kill("-TERM", -@process)
       rescue Errno::ESRCH
         # Process already terminated
       end
@@ -80,7 +82,7 @@ module MeditationPlayer
       return unless playing?
 
       begin
-        Process.kill('-STOP', -@process)
+        Process.kill("-STOP", -@process)
         @paused = true
       rescue Errno::ESRCH
         # Process already terminated
@@ -94,7 +96,7 @@ module MeditationPlayer
       return unless paused?
 
       begin
-        Process.kill('-CONT', -@process)
+        Process.kill("-CONT", -@process)
         @paused = false
       rescue Errno::ESRCH
         # Process already terminated

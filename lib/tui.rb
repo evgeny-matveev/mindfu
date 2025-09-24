@@ -1,4 +1,6 @@
-require 'curses'
+# frozen_string_literal: true
+
+require "curses"
 
 module MeditationPlayer
   # Terminal user interface for meditation player
@@ -140,7 +142,6 @@ module MeditationPlayer
       @window.setpos(Curses.lines - 1, 0)
       @window.addstr("Press Q to quit")
     end
-
 
     # Handle keyboard input from user
     #

@@ -25,8 +25,12 @@ ruby mindfu.rb
 
 ### Testing
 ```bash
-# Run all tests
-find tests -name "*.rb" -exec ruby -Ilib {} \;
+# Run all tests (simplest)
+ruby test_all.rb
+
+# Alternative ways to run all tests
+find tests -name "*_test.rb" -exec ruby -Ilib {} \;
+ruby -Ilib tests/*_test.rb
 
 # Run specific test file
 ruby -Ilib tests/audio_player_test.rb
@@ -35,6 +39,15 @@ ruby -Ilib tests/state_persistence_test.rb
 
 # Run tests with test helper
 ruby -Ilib tests/test_helper.rb
+```
+
+### Code Quality
+```bash
+# Run Rubocop linting
+bundle exec rubocop
+
+# Run Rubocop with auto-correction
+bundle exec rubocop -A
 ```
 
 ### Documentation

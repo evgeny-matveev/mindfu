@@ -1,4 +1,6 @@
-require_relative 'test_helper'
+# frozen_string_literal: true
+
+require_relative "test_helper"
 
 module MeditationPlayer
   class AudioPlayerTest < Test
@@ -7,7 +9,7 @@ module MeditationPlayer
     end
 
     def teardown
-      @player.stop if @player
+      @player&.stop
     end
 
     def test_audio_files_returns_array
@@ -15,11 +17,11 @@ module MeditationPlayer
     end
 
     def test_initially_not_playing
-      refute @player.playing?
+      refute_predicate @player, :playing?
     end
 
     def test_initially_not_paused
-      refute @player.paused?
+      refute_predicate @player, :paused?
     end
 
     def test_current_file_returns_nil_initially
@@ -37,23 +39,23 @@ module MeditationPlayer
         true
       end
 
-      assert @player.playing?
+      assert_predicate @player, :playing?
     end
 
     def test_can_detect_paused_state
       @player.instance_variable_set(:@paused, true)
-      assert @player.paused?
+      assert_predicate @player, :paused?
     end
 
     def test_pause_when_not_playing_does_nothing
       @player.pause
-      refute @player.paused?
+      refute_predicate @player, :paused?
     end
 
     def test_resume_when_not_paused_does_nothing
       @player.instance_variable_set(:@paused, false)
       @player.resume
-      refute @player.playing?
+      refute_predicate @player, :playing?
     end
   end
 end

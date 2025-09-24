@@ -1,4 +1,6 @@
-require 'json'
+# frozen_string_literal: true
+
+require "json"
 
 module MeditationPlayer
   # Handles saving and loading player state to/from JSON files
@@ -11,7 +13,7 @@ module MeditationPlayer
   # @since 1.0.0
   class StatePersistence
     # Path to the state file
-    STATE_FILE = File.join(__dir__, '..', 'player_state.json').freeze
+    STATE_FILE = File.join(__dir__, "..", "player_state.json").freeze
 
     # Initialize state persistence with player state
     #
@@ -49,18 +51,18 @@ module MeditationPlayer
       return unless File.exist?(STATE_FILE)
 
       data = JSON.parse(File.read(STATE_FILE))
-      @state.instance_variable_set(:@current_index, data['current_index'] || 0)
+      @state.instance_variable_set(:@current_index, data["current_index"] || 0)
 
-      state_name = data['state'] || 'stopped'
+      state_name = data["state"] || "stopped"
       # Set state through the appropriate event
       case state_name
-      when 'playing'
+      when "playing"
         @state.play unless @state.playing?
-      when 'paused'
+      when "paused"
         @state.play
         @state.pause unless @state.paused?
-      when 'stopped'
-        @state.stop unless @state.state.to_s == 'stopped'
+      when "stopped"
+        @state.stop unless @state.state.to_s == "stopped"
       end
     rescue StandardError => e
       warn "Failed to load state: #{e.message}"

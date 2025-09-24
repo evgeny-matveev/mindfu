@@ -1,7 +1,9 @@
-require_relative 'audio_player'
-require_relative 'player_state'
-require_relative 'tui'
-require_relative 'state_persistence'
+# frozen_string_literal: true
+
+require_relative "audio_player"
+require_relative "player_state"
+require_relative "tui"
+require_relative "state_persistence"
 
 module MeditationPlayer
   # Main application controller for the meditation audio player

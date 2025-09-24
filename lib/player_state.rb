@@ -1,4 +1,6 @@
-require 'state_machines'
+# frozen_string_literal: true
+
+require "state_machines"
 
 module MeditationPlayer
   # Player state machine managing playback controls and file navigation
@@ -36,7 +38,7 @@ module MeditationPlayer
       end
 
       event :stop do
-        transition [:playing, :paused] => :stopped
+        transition %i[playing paused] => :stopped
       end
 
       event :next do
