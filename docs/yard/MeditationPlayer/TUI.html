@@ -611,12 +611,12 @@
       <pre class="lines">
 
 
-138
-139
-140</pre>
+143
+144
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 138</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 143</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_close_curses'>close_curses</span>
   <span class='const'>Curses</span><span class='period'>.</span><span class='id identifier rubyid_close_screen'>close_screen</span> <span class='kw'>if</span> <span class='const'>Curses</span><span class='period'>.</span><span class='id identifier rubyid_stdscr'>stdscr</span>
@@ -640,7 +640,7 @@
     <p class="note returns_void">This method returns an undefined value.</p>
 <p>Draw the complete user interface</p>
 
-<p>Clears the screen and draws all UI components: header, status, progress bar (if playing/paused), controls, and footer.</p>
+<p>Clears the screen and draws all UI components: header, status, progress bar, controls, and footer.</p>
 
 
   </div>
@@ -670,11 +670,6 @@
       <pre class="lines">
 
 
-148
-149
-150
-151
-152
 153
 154
 155
@@ -683,19 +678,20 @@
 158
 159
 160
-161</pre>
+161
+162
+163
+164</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 148</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_draw'>draw</span>
   <span class='ivar'>@window</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
 
   <span class='id identifier rubyid_draw_header'>draw_header</span>
   <span class='id identifier rubyid_draw_status'>draw_status</span>
-
-  <span class='comment'># Draw progress bar (always at line 5)
-</span>  <span class='id identifier rubyid_draw_progress_bar'>draw_progress_bar</span>
+  <span class='id identifier rubyid_draw_progress_bar'>draw_progress_bar</span>
 
   <span class='id identifier rubyid_draw_controls'>draw_controls</span>
   <span class='id identifier rubyid_draw_footer'>draw_footer</span>
@@ -751,9 +747,6 @@
       <pre class="lines">
 
 
-194
-195
-196
 197
 198
 199
@@ -765,10 +758,13 @@
 205
 206
 207
-208</pre>
+208
+209
+210
+211</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 194</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 197</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_draw_controls'>draw_controls</span>
   <span class='id identifier rubyid_controls'>controls</span> <span class='op'>=</span> <span class='lbracket'>[</span>
@@ -834,13 +830,13 @@
       <pre class="lines">
 
 
-243
-244
-245
-246</pre>
+246
+247
+248
+249</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 243</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 246</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_draw_footer'>draw_footer</span>
   <span class='ivar'>@window</span><span class='period'>.</span><span class='id identifier rubyid_setpos'>setpos</span><span class='lparen'>(</span><span class='const'>Curses</span><span class='period'>.</span><span class='id identifier rubyid_lines'>lines</span> <span class='op'>-</span> <span class='int'>1</span><span class='comma'>,</span> <span class='int'>0</span><span class='rparen'>)</span>
@@ -895,14 +891,14 @@
       <pre class="lines">
 
 
-168
-169
-170
 171
-172</pre>
+172
+173
+174
+175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 168</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 171</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_draw_header'>draw_header</span>
   <span class='id identifier rubyid_title'>title</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Meditation Player</span><span class='tstring_end'>&quot;</span></span>
@@ -958,19 +954,19 @@
       <pre class="lines">
 
 
-215
-216
-217
 218
 219
 220
 221
-222</pre>
+222
+223
+224
+225</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 215</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 218</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_draw_progress_bar'>draw_progress_bar</span>
+<span class='id identifier rubyid_private'>private</span> <span class='kw'>def</span> <span class='id identifier rubyid_draw_progress_bar'>draw_progress_bar</span>
   <span class='id identifier rubyid_progress'>progress</span> <span class='op'>=</span> <span class='ivar'>@state</span><span class='period'>.</span><span class='id identifier rubyid_player'>player</span><span class='period'>.</span><span class='id identifier rubyid_current_progress'>current_progress</span> <span class='op'>||</span> <span class='float'>0.0</span>
   <span class='id identifier rubyid_progress_bar'>progress_bar</span> <span class='op'>=</span> <span class='id identifier rubyid_format_progress_bar'>format_progress_bar</span><span class='lparen'>(</span><span class='id identifier rubyid_progress'>progress</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_percentage'>percentage</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_progress'>progress</span> <span class='op'>*</span> <span class='int'>100</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_round'>round</span>
@@ -1027,18 +1023,18 @@
       <pre class="lines">
 
 
-179
-180
-181
 182
 183
 184
 185
 186
-187</pre>
+187
+188
+189
+190</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 179</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 182</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_draw_status'>draw_status</span>
   <span class='id identifier rubyid_filename'>filename</span> <span class='op'>=</span> <span class='ivar'>@state</span><span class='period'>.</span><span class='id identifier rubyid_current_filename'>current_filename</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No file</span><span class='tstring_end'>&quot;</span></span>
@@ -1134,20 +1130,20 @@
       <pre class="lines">
 
 
-228
-229
-230
 231
 232
 233
 234
 235
-236</pre>
+236
+237
+238
+239</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 228</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 231</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_format_progress_bar'>format_progress_bar</span><span class='lparen'>(</span><span class='id identifier rubyid_progress'>progress</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_private'>private</span> <span class='kw'>def</span> <span class='id identifier rubyid_format_progress_bar'>format_progress_bar</span><span class='lparen'>(</span><span class='id identifier rubyid_progress'>progress</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_percentage'>percentage</span> <span class='op'>=</span> <span class='id identifier rubyid_progress'>progress</span><span class='period'>.</span><span class='id identifier rubyid_clamp'>clamp</span><span class='lparen'>(</span><span class='float'>0.0</span><span class='comma'>,</span> <span class='float'>1.0</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_filled'>filled</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_percentage'>percentage</span> <span class='op'>&gt;=</span> <span class='float'>0.9</span>
              <span class='int'>10</span> <span class='comment'># Show full bar at 90% (completion threshold)
@@ -1207,13 +1203,13 @@
       <pre class="lines">
 
 
-85
-86
-87
-88</pre>
+90
+91
+92
+93</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 85</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_handle_input'>handle_input</span>
   <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='ivar'>@window</span><span class='period'>.</span><span class='id identifier rubyid_getch'>getch</span>
@@ -1268,16 +1264,16 @@
       <pre class="lines">
 
 
-125
-126
-127
-128
-129
 130
-131</pre>
+131
+132
+133
+134
+135
+136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 125</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 130</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_init_curses'>init_curses</span>
   <span class='const'>Curses</span><span class='period'>.</span><span class='id identifier rubyid_init_screen'>init_screen</span>
@@ -1353,11 +1349,6 @@
       <pre class="lines">
 
 
-94
-95
-96
-97
-98
 99
 100
 101
@@ -1374,10 +1365,15 @@
 112
 113
 114
-115</pre>
+115
+116
+117
+118
+119
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 94</span>
+      <pre class="code"><span class="info file"># File 'lib/tui.rb', line 99</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_process_key'>process_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_key'>key</span>
@@ -1486,7 +1482,12 @@
 65
 66
 67
-68</pre>
+68
+69
+70
+71
+72
+73</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/tui.rb', line 32</span>
@@ -1518,8 +1519,13 @@
       <span class='ivar'>@window</span><span class='period'>.</span><span class='id identifier rubyid_nodelay'>nodelay</span> <span class='op'>=</span> <span class='kw'>false</span>
       <span class='id identifier rubyid_process_key'>process_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_key'>key</span>
     <span class='kw'>else</span>
-      <span class='comment'># Blocking input when not playing
-</span>      <span class='id identifier rubyid_handle_input'>handle_input</span>
+      <span class='comment'># Non-blocking input check when not playing too (more responsive)
+</span>      <span class='ivar'>@window</span><span class='period'>.</span><span class='id identifier rubyid_nodelay'>nodelay</span> <span class='op'>=</span> <span class='kw'>true</span>
+      <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='ivar'>@window</span><span class='period'>.</span><span class='id identifier rubyid_getch'>getch</span>
+      <span class='ivar'>@window</span><span class='period'>.</span><span class='id identifier rubyid_nodelay'>nodelay</span> <span class='op'>=</span> <span class='kw'>false</span>
+      <span class='id identifier rubyid_process_key'>process_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_key'>key</span>
+      <span class='comment'># Small sleep to prevent CPU spinning when not playing
+</span>      <span class='id identifier rubyid_sleep'>sleep</span> <span class='float'>0.05</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -1538,7 +1544,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Sep 24 22:12:45 2025 by
+  Generated on Wed Sep 24 23:27:55 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.4.5).
 </div>

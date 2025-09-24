@@ -53,12 +53,12 @@ module MeditationPlayer
 
       socket_path = @player.instance_variable_get(:@mpv_socket)
       assert socket_path, "MPV socket path should be set"
-      assert File.exist?(socket_path), "MPV socket file should exist"
+      assert_path_exists socket_path, "MPV socket file should exist"
 
       @player.stop
 
       # Socket should be cleaned up after stop
-      refute File.exist?(socket_path), "MPV socket should be cleaned up after stop"
+      refute_path_exists socket_path, "MPV socket should be cleaned up after stop"
     end
 
     def test_mpv_command_uses_valid_options
@@ -72,7 +72,7 @@ module MeditationPlayer
       @player.define_singleton_method(:spawn) do |*args|
         actual_command = args
         # Return a valid PID for testing
-        12345
+        12_345
       end
 
       @player.play(file)
@@ -83,14 +83,16 @@ module MeditationPlayer
 
       # Should include valid options
       assert_includes command_string, "--no-video", "Command should include --no-video"
-      assert_includes command_string, "--input-ipc-server", "Command should include --input-ipc-server"
+      assert_includes command_string, "--input-ipc-server",
+                      "Command should include --input-ipc-server"
 
       # Should NOT include invalid options
       refute_includes command_string, "--autoexit", "Command should NOT include --autoexit"
-      refute_includes command_string, "--loglevel=quiet", "Command should NOT include --loglevel=quiet"
+      refute_includes command_string, "--loglevel=quiet",
+                      "Command should NOT include --loglevel=quiet"
 
       pid = @player.instance_variable_get(:@mpv_pid)
-      assert_equal 12345, pid, "Valid PID should be set"
+      assert_equal 12_345, pid, "Valid PID should be set"
     end
   end
 end

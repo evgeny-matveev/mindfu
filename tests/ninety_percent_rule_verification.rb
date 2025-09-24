@@ -22,8 +22,10 @@ module MeditationPlayer
       file_content = File.read(source_code[0])
 
       # Check that the 90% rule is implemented
-      assert_includes file_content, "progress >= 0.9", "90% rule should be implemented in stop_playback"
-      assert_includes file_content, "record_played_file", "Should call record_played_file when progress >= 90%"
+      assert_includes file_content, "progress >= 0.9",
+                      "90% rule should be implemented in stop_playback"
+      assert_includes file_content, "record_played_file",
+                      "Should call record_played_file when progress >= 90%"
     end
 
     def test_ninety_percent_rule_is_implemented_in_go_to_next
@@ -35,8 +37,10 @@ module MeditationPlayer
       file_content = File.read(source_code[0])
 
       # Check that the 90% rule is implemented
-      assert_includes file_content, "progress >= 0.9", "90% rule should be implemented in go_to_next"
-      assert_includes file_content, "record_played_file", "Should call record_played_file when progress >= 90%"
+      assert_includes file_content, "progress >= 0.9",
+                      "90% rule should be implemented in go_to_next"
+      assert_includes file_content, "record_played_file",
+                      "Should call record_played_file when progress >= 90%"
     end
 
     def test_random_file_selector_has_10_file_limit
@@ -48,7 +52,8 @@ module MeditationPlayer
 
       # Verify the enforcement method exists (it's private)
       enforcement_method = selector.class.private_instance_methods(false)
-      assert_includes enforcement_method, :enforce_recently_played_limit, "Should have private enforce_recently_played_limit method"
+      assert_includes enforcement_method, :enforce_recently_played_limit,
+                      "Should have private enforce_recently_played_limit method"
     end
 
     def test_ten_file_limit_enforcement_method

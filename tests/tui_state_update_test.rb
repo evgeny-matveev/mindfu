@@ -70,6 +70,10 @@ module MeditationPlayer
       mock_window.expect :setpos, nil, [3, 2]
       mock_window.expect :addstr, nil, [/State: PLAYING/]
 
+      # Mock progress bar call
+      mock_window.expect :setpos, nil, [5, 2]
+      mock_window.expect :addstr, nil, [/Progress: \[.+\] \d+%/]
+
       # Mock other draw calls (controls and footer - 5 controls + 1 footer = 6 calls)
       6.times do
         mock_window.expect :setpos, nil, [Integer, Integer]
@@ -95,6 +99,10 @@ module MeditationPlayer
       mock_window.expect :addstr, nil, [String] # File line
       mock_window.expect :setpos, nil, [3, 2]
       mock_window.expect :addstr, nil, [/State: PAUSED/]
+
+      # Mock progress bar call
+      mock_window.expect :setpos, nil, [5, 2]
+      mock_window.expect :addstr, nil, [/Progress: \[.+\] \d+%/]
 
       # Mock other draw calls (controls and footer - 5 controls + 1 footer = 6 calls)
       6.times do
@@ -122,6 +130,10 @@ module MeditationPlayer
       mock_window.expect :addstr, nil, [String] # File line
       mock_window.expect :setpos, nil, [3, 2]
       mock_window.expect :addstr, nil, [/State: STOPPED/]
+
+      # Mock progress bar call
+      mock_window.expect :setpos, nil, [5, 2]
+      mock_window.expect :addstr, nil, [/Progress: \[.+\] \d+%/]
 
       # Mock other draw calls (controls and footer - 5 controls + 1 footer = 6 calls)
       6.times do

@@ -64,9 +64,9 @@
 
 <h2 id="label-Features">Features</h2>
 <ul><li>
-<p>TUI interface with current file name and progress bar</p>
+<p>TUI interface with current file name</p>
 </li><li>
-<p>Audio playback using ffplay</p>
+<p>Audio playback using mpv</p>
 </li><li>
 <p>State machine for play/pause/next/prev controls</p>
 </li><li>
@@ -81,14 +81,23 @@
 <ul><li>
 <p>Ruby 3.0+</p>
 </li><li>
-<p>ffplay (from FFmpeg)</p>
+<p>mpv (Media Player)</p>
 </li><li>
 <p>Audio files in <code>audio_files/</code> directory</p>
 </li></ul>
 
 <h2 id="label-Installation">Installation</h2>
 <ol><li>
-<p>Install dependencies: <code>bash   bundle install </code></p>
+<p>Install mpv:</p>
+</li></ol>
+
+<p><strong>macOS:</strong> <code>bash   brew install mpv </code></p>
+
+<p><strong>Ubuntu/Debian:</strong> <code>bash   sudo apt-get install mpv </code></p>
+
+<p><strong>Fedora:</strong> <code>bash   sudo dnf install mpv </code></p>
+<ol><li>
+<p>Install Ruby dependencies: <code>bash   bundle install </code></p>
 </li><li>
 <p>Add meditation audio files to <code>audio_files/</code> directory (supports mp3, mp4, wav, ogg)</p>
 </li><li>
@@ -151,7 +160,7 @@ ruby -Ilib tests/random_file_selector_test.rb
 │   └── mindfu                # Main entry point
 ├── lib/
 │   ├── meditation_player.rb  # Main app controller
-│   ├── audio_player.rb       # Audio playback with ffplay
+│   ├── mpv_player.rb        # Audio playback with mpv
 │   ├── player_state.rb       # State machine
 │   ├── tui.rb                # Terminal UI
 │   └── random_file_selector.rb  # Random file selection with history
@@ -162,7 +171,7 @@ ruby -Ilib tests/random_file_selector_test.rb
 </div></div>
 
       <div id="footer">
-  Generated on Wed Sep 24 22:12:45 2025 by
+  Generated on Wed Sep 24 23:27:55 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.4.5).
 </div>
