@@ -1,0 +1,5 @@
+--markup markdown
+--protected
+--private
+-o docs/yard
+lib/**/*.rb
