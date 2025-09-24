@@ -25,6 +25,7 @@ Thumbs.db
 /.yardoc/
 /_yardoc/
 /doc/
+/docs/
 /rdoc/
 
 # Environment files
@@ -49,6 +50,3 @@ Thumbs.db
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Player state (no longer tracked)
-player_state.json

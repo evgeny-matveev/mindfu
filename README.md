@@ -28,7 +28,7 @@ A minimal TUI meditation audio player built with Ruby.
 
 3. Run the application:
    ```bash
-   ruby mindfu.rb
+   bin/mindfu
    ```
 
 ## Controls
@@ -51,7 +51,7 @@ A minimal TUI meditation audio player built with Ruby.
 
 ```bash
 # Run all tests (simplest)
-ruby test_all.rb
+ruby tests/test_all.rb
 
 # Alternative ways to run all tests
 find tests -name "*_test.rb" -exec ruby -Ilib {} \;
@@ -60,7 +60,7 @@ ruby -Ilib tests/*_test.rb
 # Run specific test file
 ruby -Ilib tests/audio_player_test.rb
 ruby -Ilib tests/player_state_test.rb
-ruby -Ilib tests/state_persistence_test.rb
+ruby -Ilib tests/random_file_selector_test.rb
 ```
 
 ## Documentation
@@ -74,13 +74,15 @@ bundle exec yard
 ## Project Structure
 
 ```
+├── bin/
+│   └── mindfu                # Main entry point
 ├── lib/
 │   ├── meditation_player.rb  # Main app controller
 │   ├── audio_player.rb       # Audio playback with ffplay
 │   ├── player_state.rb       # State machine
 │   ├── tui.rb                # Terminal UI
-│   └── state_persistence.rb  # JSON state save/load
+│   └── random_file_selector.rb  # Random file selection with history
 ├── tests/                    # Minitest suite
-├── audio_files/              # Place audio files here
-└── mindfu.rb                 # Entry point
+├── tmp/                      # Temporary files (recently_played.json)
+└── audio_files/              # Place audio files here
 ```

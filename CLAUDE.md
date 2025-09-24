@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 bundle install
 
 # Run the main application
-ruby mindfu.rb
+bin/mindfu
 
 # Run with specific audio files in audio_files/ directory
 ```
@@ -26,7 +26,7 @@ ruby mindfu.rb
 ### Testing
 ```bash
 # Run all tests (simplest)
-ruby test_all.rb
+ruby tests/test_all.rb
 
 # Alternative ways to run all tests
 find tests -name "*_test.rb" -exec ruby -Ilib {} \;
@@ -35,7 +35,7 @@ ruby -Ilib tests/*_test.rb
 # Run specific test file
 ruby -Ilib tests/audio_player_test.rb
 ruby -Ilib tests/player_state_test.rb
-ruby -Ilib tests/state_persistence_test.rb
+ruby -Ilib tests/random_file_selector_test.rb
 
 # Run tests with test helper
 ruby -Ilib tests/test_helper.rb
@@ -77,10 +77,10 @@ The meditation player follows a modular architecture with clear separation of co
    - Handles keyboard input for controls
    - No progress bar (removed for simplicity)
 
-4. **StatePersistence** (`lib/state_persistence.rb`): JSON-based state saving/loading
-   - Preserves current track index and playback state between sessions
-   - Handles missing files gracefully
-   - Uses state machine events for proper state restoration
+4. **RandomFileSelector** (`lib/random_file_selector.rb`): Random file selection with session history
+   - Implements 90% rule for excluding recently played files
+   - Maintains persistent recently played history in `tmp/recently_played.json`
+   - Handles session-based navigation (next/previous)
 
 ### Key Design Patterns
 
