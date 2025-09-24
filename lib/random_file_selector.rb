@@ -41,8 +41,13 @@ module MeditationPlayer
       available_files = @state.player.audio_files
       return nil if available_files.empty?
 
+      # Convert recently played basenames to full paths for comparison
+      recently_played_full_paths = @recently_played_files.map do |basename|
+        available_files.find { |full_path| File.basename(full_path) == basename }
+      end.compact
+
       # Get files that aren't recently played
-      candidates = available_files - @recently_played_files
+      candidates = available_files - recently_played_full_paths
 
       # If we have candidates that aren't recently played, prefer them
       # Only fall back if we have no candidates
@@ -59,14 +64,21 @@ module MeditationPlayer
     # @param filename [String] the filename that was played
     # @return [void]
     def record_played_file(filename)
-      return unless filename && @state.player.audio_files.include?(filename)
+      return unless filename
+
+      # Convert to basename for storage and comparison
+      basename = File.basename(filename)
+
+      # Check if the basename exists in available files
+      available_basenames = @state.player.audio_files.map { |f| File.basename(f) }
+      return unless available_basenames.include?(basename)
 
       # Add to session history
       @session_history << filename
       @current_position = @session_history.length - 1
 
       # Add to recently played and enforce limit
-      @recently_played_files << filename
+      @recently_played_files << basename
       enforce_recently_played_limit
       save_recently_played
     end
