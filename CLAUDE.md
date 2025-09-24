@@ -33,7 +33,7 @@ find tests -name "*_test.rb" -exec ruby -Ilib {} \;
 ruby -Ilib tests/*_test.rb
 
 # Run specific test file
-ruby -Ilib tests/audio_player_test.rb
+ruby -Ilib tests/mpv_player_test.rb
 ruby -Ilib tests/player_state_test.rb
 ruby -Ilib tests/random_file_selector_test.rb
 
@@ -62,15 +62,16 @@ The meditation player follows a modular architecture with clear separation of co
 
 ### Core Components
 
-1. **AudioPlayer** (`lib/audio_player.rb`): Handles ffplay process management
-   - Uses `SIGSTOP`/`SIGCONT` signals for pause/resume functionality
+1. **MPVPlayer** (`lib/mpv_player.rb`): Handles mpv process management
+   - Uses JSON IPC for accurate progress tracking and control
    - Manages process groups for proper cleanup
    - Redirects output to `/dev/null` for background operation
+   - Supports proper pause/resume through mpv commands
 
 2. **PlayerState** (`lib/player_state.rb`): State machine using `state_machines` gem
    - Manages transitions between :stopped, :playing, :paused states
    - Handles file navigation (next/previous track)
-   - Triggers appropriate AudioPlayer methods during state transitions
+   - Triggers appropriate MPVPlayer methods during state transitions
 
 3. **TUI** (`lib/tui.rb`): Terminal user interface using curses
    - Minimal interface showing current file and playback state
@@ -87,7 +88,8 @@ The meditation player follows a modular architecture with clear separation of co
 - **State Machine**: Central to controlling playback behavior
 - **Dependency Injection**: Components are loosely coupled through constructor injection
 - **Process Management**: Proper Unix signal handling for audio playback
-- **Error Handling**: Graceful degradation when ffplay processes fail
+- **Error Handling**: Graceful degradation when mpv processes fail
+- **IPC Communication**: JSON-based Inter-Process Communication for accurate progress tracking
 
 ### Audio File Handling
 
@@ -122,10 +124,11 @@ The player responds to these events:
 
 ### Process Management
 
-ffplay runs in background process groups with:
-- `-nodisp`: No display window
-- `-autoexit`: Process terminates when playback completes
-- `-loglevel quiet`: Suppress console output
+mpv runs in background process groups with:
+- `--no-video`: No video display
+- `--autoexit`: Process terminates when playback completes
+- `--loglevel=quiet`: Suppress console output
+- `--input-ipc-server=SOCKET`: JSON IPC communication socket
 - Output redirected to `/dev/null`
 - Proper cleanup on application exit
 

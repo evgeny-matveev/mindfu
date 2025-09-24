@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "audio_player"
+require_relative "mpv_player"
 require_relative "player_state"
 require_relative "tui"
 
@@ -20,7 +20,7 @@ module MeditationPlayer
     #
     # @return [App] new instance
     def initialize
-      @player = AudioPlayer.new
+      @player = MPVPlayer.new
       @state = PlayerState.new(@player)
       @tui = TUI.new(@state)
     end

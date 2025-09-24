@@ -5,7 +5,7 @@ require_relative "test_helper"
 module MeditationPlayer
   class TUITest < Test
     def setup
-      @player = AudioPlayer.new
+      @player = MPVPlayer.new
       @state = PlayerState.new(@player)
       @tui = TUI.new(@state)
     end

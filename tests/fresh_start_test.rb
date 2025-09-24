@@ -7,7 +7,7 @@ module MeditationPlayer
   class FreshStartTest < Test
     def test_app_starts_with_fresh_random_file_each_session
       # Test that each new PlayerState instance starts with a fresh random file
-      player = AudioPlayer.new
+      player = MPVPlayer.new
 
       # Clean up any existing persistence
       recently_played_file = "tmp/recently_played.json"
@@ -52,7 +52,7 @@ module MeditationPlayer
       FileUtils.rm_f(state_file)
 
       # Create and use a PlayerState
-      player = AudioPlayer.new
+      player = MPVPlayer.new
       state = PlayerState.new(player)
       state.play if player.audio_files.any?
       state.stop
@@ -69,7 +69,7 @@ module MeditationPlayer
       FileUtils.rm_f("tmp/recently_played.json")
 
       # Create first session and record some files
-      player = AudioPlayer.new
+      player = MPVPlayer.new
       state1 = PlayerState.new(player)
 
       # Get initial recently played files (should be empty since no files completed)

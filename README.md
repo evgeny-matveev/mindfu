@@ -4,8 +4,8 @@ A minimal TUI meditation audio player built with Ruby.
 
 ## Features
 
-- TUI interface with current file name and progress bar
-- Audio playback using ffplay
+- TUI interface with current file name
+- Audio playback using mpv
 - State machine for play/pause/next/prev controls
 - JSON state persistence
 - Minitest suite
@@ -14,19 +14,36 @@ A minimal TUI meditation audio player built with Ruby.
 ## Requirements
 
 - Ruby 3.0+
-- ffplay (from FFmpeg)
+- mpv (Media Player)
 - Audio files in `audio_files/` directory
 
 ## Installation
 
-1. Install dependencies:
+1. Install mpv:
+
+   **macOS:**
+   ```bash
+   brew install mpv
+   ```
+
+   **Ubuntu/Debian:**
+   ```bash
+   sudo apt-get install mpv
+   ```
+
+   **Fedora:**
+   ```bash
+   sudo dnf install mpv
+   ```
+
+2. Install Ruby dependencies:
    ```bash
    bundle install
    ```
 
-2. Add meditation audio files to `audio_files/` directory (supports mp3, mp4, wav, ogg)
+3. Add meditation audio files to `audio_files/` directory (supports mp3, mp4, wav, ogg)
 
-3. Run the application:
+4. Run the application:
    ```bash
    bin/mindfu
    ```
@@ -78,7 +95,7 @@ bundle exec yard
 │   └── mindfu                # Main entry point
 ├── lib/
 │   ├── meditation_player.rb  # Main app controller
-│   ├── audio_player.rb       # Audio playback with ffplay
+│   ├── mpv_player.rb        # Audio playback with mpv
 │   ├── player_state.rb       # State machine
 │   ├── tui.rb                # Terminal UI
 │   └── random_file_selector.rb  # Random file selection with history

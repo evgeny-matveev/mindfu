@@ -259,21 +259,19 @@
       <pre class="lines">
 
 
+22
 23
 24
 25
-26
-27
-28</pre>
+26</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/meditation_player.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'lib/meditation_player.rb', line 22</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
-  <span class='ivar'>@player</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="AudioPlayer.html" title="MeditationPlayer::AudioPlayer (class)">AudioPlayer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="AudioPlayer.html#initialize-instance_method" title="MeditationPlayer::AudioPlayer#initialize (method)">new</a></span></span>
+  <span class='ivar'>@player</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="MPVPlayer.html" title="MeditationPlayer::MPVPlayer (class)">MPVPlayer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="MPVPlayer.html#initialize-instance_method" title="MeditationPlayer::MPVPlayer#initialize (method)">new</a></span></span>
   <span class='ivar'>@state</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="PlayerState.html" title="MeditationPlayer::PlayerState (class)">PlayerState</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="PlayerState.html#initialize-instance_method" title="MeditationPlayer::PlayerState#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@player</span><span class='rparen'>)</span>
   <span class='ivar'>@tui</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="TUI.html" title="MeditationPlayer::TUI (class)">TUI</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TUI.html#initialize-instance_method" title="MeditationPlayer::TUI#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@state</span><span class='rparen'>)</span>
-  <span class='ivar'>@persistence</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="StatePersistence.html" title="MeditationPlayer::StatePersistence (class)">StatePersistence</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="StatePersistence.html#initialize-instance_method" title="MeditationPlayer::StatePersistence#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@state</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -301,7 +299,7 @@
     <p class="note returns_void">This method returns an undefined value.</p>
 <p>Run the meditation player application</p>
 
-<p>Loads the previous state, starts the user interface, and saves the state when exiting.</p>
+<p>Starts the user interface with a fresh random file selection. Only recently played files are persisted for random selection.</p>
 
 
   </div>
@@ -331,27 +329,19 @@
       <pre class="lines">
 
 
+34
+35
 36
 37
-38
-39
-40
-41
-42
-43
-44</pre>
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/meditation_player.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'lib/meditation_player.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_run'>run</span>
-  <span class='ivar'>@persistence</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span>
-  <span class='kw'>begin</span>
-    <span class='ivar'>@tui</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span>
-  <span class='kw'>ensure</span>
-    <span class='ivar'>@state</span><span class='period'>.</span><span class='id identifier rubyid_stop'>stop</span>
-    <span class='ivar'>@persistence</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
-  <span class='kw'>end</span>
+  <span class='ivar'>@tui</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span>
+<span class='kw'>ensure</span>
+  <span class='ivar'>@state</span><span class='period'>.</span><span class='id identifier rubyid_stop'>stop</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -363,7 +353,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Sep 24 13:49:59 2025 by
+  Generated on Wed Sep 24 22:12:46 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.4.5).
 </div>

@@ -92,7 +92,7 @@
 </li><li>
 <p>Add meditation audio files to <code>audio_files/</code> directory (supports mp3, mp4, wav, ogg)</p>
 </li><li>
-<p>Run the application: <code>bash   ruby mindfu.rb </code></p>
+<p>Run the application: <code>bash   bin/mindfu </code></p>
 </li></ol>
 
 <h2 id="label-Controls">Controls</h2>
@@ -126,7 +126,7 @@
 <h2 id="label-Running+Tests">Running Tests</h2>
 
 <pre class="code ruby"><code class="ruby"># Run all tests (simplest)
-ruby test_all.rb
+ruby tests/test_all.rb
 
 # Alternative ways to run all tests
 find tests -name &quot;*_test.rb&quot; -exec ruby -Ilib {} \;
@@ -135,7 +135,7 @@ ruby -Ilib tests/*_test.rb
 # Run specific test file
 ruby -Ilib tests/audio_player_test.rb
 ruby -Ilib tests/player_state_test.rb
-ruby -Ilib tests/state_persistence_test.rb
+ruby -Ilib tests/random_file_selector_test.rb
 </code></pre>
 
 <h2 id="label-Documentation">Documentation</h2>
@@ -147,20 +147,22 @@ ruby -Ilib tests/state_persistence_test.rb
 
 <h2 id="label-Project+Structure">Project Structure</h2>
 
-<pre class="code ruby"><code class="ruby">├── lib/
+<pre class="code ruby"><code class="ruby">├── bin/
+│   └── mindfu                # Main entry point
+├── lib/
 │   ├── meditation_player.rb  # Main app controller
 │   ├── audio_player.rb       # Audio playback with ffplay
 │   ├── player_state.rb       # State machine
 │   ├── tui.rb                # Terminal UI
-│   └── state_persistence.rb  # JSON state save/load
+│   └── random_file_selector.rb  # Random file selection with history
 ├── tests/                    # Minitest suite
-├── audio_files/              # Place audio files here
-└── mindfu.rb                 # Entry point
+├── tmp/                      # Temporary files (recently_played.json)
+└── audio_files/              # Place audio files here
 </code></pre>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Sep 24 13:49:59 2025 by
+  Generated on Wed Sep 24 22:12:45 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.4.5).
 </div>

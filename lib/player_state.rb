@@ -17,7 +17,7 @@ module MeditationPlayer
 
     # Initialize player state with audio player
     #
-    # @param player [AudioPlayer] the audio player instance
+    # @param player [MPVPlayer] the audio player instance
     # @return [PlayerState] new instance
     def initialize(player)
       @player = player

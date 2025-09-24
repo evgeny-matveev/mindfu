@@ -6,7 +6,7 @@ require_relative "../lib/random_file_selector"
 module MeditationPlayer
   class RandomFileSelectorTest < Test
     def setup
-      @player = AudioPlayer.new
+      @player = MPVPlayer.new
       @state = PlayerState.new(@player)
       @selector = RandomFileSelector.new(@state)
     end

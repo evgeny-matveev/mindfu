@@ -6,7 +6,7 @@ require_relative "../lib/tui"
 module MeditationPlayer
   class ProgressBarTest < Test
     def setup
-      @state = PlayerState.new(AudioPlayer.new)
+      @state = PlayerState.new(MPVPlayer.new)
       @tui = TUI.new(@state)
     end
 
