@@ -32,10 +32,31 @@ module MeditationPlayer
     def run
       init_curses
       @running = true
+      @last_update = Time.now
+
+      # Initial draw to ensure content is visible immediately
+      draw
 
       while @running
-        draw
-        handle_input
+        current_time = Time.now
+
+        # Update display every 100ms when playing, otherwise every 500ms
+        update_interval = @state.playing? ? 0.1 : 0.5
+
+        if current_time - @last_update >= update_interval
+          draw
+          @last_update = current_time
+        end
+
+        handle_input unless @state.playing?
+
+        # Non-blocking input check when playing
+        next unless @state.playing?
+
+        @window.nodelay = true
+        key = @window.getch
+        @window.nodelay = false
+        process_key(key) if key
       end
 
       close_curses
@@ -61,6 +82,14 @@ module MeditationPlayer
     # @return [void]
     def handle_input
       key = @window.getch
+      process_key(key)
+    end
+
+    # Process a single key input
+    #
+    # @param key [String, Integer] the key to process
+    # @return [void]
+    def process_key(key)
       return unless key
 
       case key
@@ -111,17 +140,22 @@ module MeditationPlayer
     # Draw the complete user interface
     #
     # Clears the screen and draws all UI components:
-    # header, status, controls, and footer.
+    # header, status, progress bar (if playing/paused), controls, and footer.
     #
     # @return [void]
     def draw
       @window.clear
-      @window.refresh
 
       draw_header
       draw_status
+
+      # Draw progress bar (always at line 5)
+      draw_progress_bar
+
       draw_controls
       draw_footer
+
+      @window.refresh
     end
 
     # Draw the header with title
@@ -169,6 +203,34 @@ module MeditationPlayer
         @window.addstr(control)
         @window.setpos(7 + i, 2) if i < controls.length - 1
       end
+    end
+
+    # Draw the progress bar
+    #
+    # Shows a visual progress bar indicating playback progress.
+    #
+    # @return [void]
+    def draw_progress_bar
+      progress = @state.player.current_progress || 0.0
+      progress_bar = format_progress_bar(progress)
+      percentage = (progress * 100).round
+
+      @window.setpos(5, 2)
+      @window.addstr("Progress: #{progress_bar} #{percentage}%")
+    end
+
+    # Format progress as a visual progress bar
+    #
+    # @param progress [Float] progress percentage (0.0 to 1.0)
+    # @return [String] formatted progress bar
+    def format_progress_bar(progress)
+      percentage = progress.clamp(0.0, 1.0)
+      filled = if percentage >= 0.9
+                 10 # Show full bar at 90% (completion threshold)
+               else
+                 (percentage * 10).floor
+               end
+      "[#{'=' * filled}#{' ' * (10 - filled)}]"
     end
 
     # Draw the footer with quit instruction

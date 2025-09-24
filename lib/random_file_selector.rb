@@ -14,8 +14,8 @@ module MeditationPlayer
   # @author Your Name
   # @since 1.0.0
   class RandomFileSelector
-    # Maximum percentage of files to exclude from random selection
-    MAX_RECENT_PERCENTAGE = 0.9
+    # Maximum number of recently played files to exclude from random selection
+    MAX_RECENT_FILES = 10
     # Persistence file for recently played files
     RECENTLY_PLAYED_FILE = "tmp/recently_played.json"
 
@@ -32,7 +32,7 @@ module MeditationPlayer
 
     # Select a random file from available files, excluding recently played ones
     #
-    # Implements the 90% rule: excludes up to 90% of files that were recently played
+    # Implements the last-10 rule: excludes up to 10 files that were recently played
     # Prefers non-recently played files when available
     # Falls back to any file if all files are recently played
     #
@@ -54,7 +54,7 @@ module MeditationPlayer
     # Record a file as played and update recently played history
     #
     # Adds the file to both session history and persistent recently played files.
-    # Enforces the 90% limit on recently played files.
+    # Enforces the last-10 limit on recently played files.
     #
     # @param filename [String] the filename that was played
     # @return [void]
@@ -148,17 +148,15 @@ module MeditationPlayer
       File.write(RECENTLY_PLAYED_FILE, JSON.pretty_generate(data))
     end
 
-    # Enforce the 90% limit on recently played files
+    # Enforce the last-10 limit on recently played files
     #
     # Removes oldest files from recently played history to maintain
-    # only 90% of total available files maximum.
+    # only 10 files maximum.
     #
     # @return [void]
     def enforce_recently_played_limit
-      max_recent = (@state.player.audio_files.length * MAX_RECENT_PERCENTAGE).to_i
-      max_recent = [max_recent, 1].max # Always keep at least 1
-
-      @recently_played_files.shift while @recently_played_files.length > max_recent
+      # Keep only the last MAX_RECENT_FILES (10) files
+      @recently_played_files.shift while @recently_played_files.length > MAX_RECENT_FILES
     end
   end
 end

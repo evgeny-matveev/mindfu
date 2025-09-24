@@ -20,6 +20,9 @@ module MeditationPlayer
       @process = nil
       @current_file = nil
       @paused = false
+      @start_time = nil
+      @pause_time = nil
+      @file_durations = {}
     end
 
     # Get list of available audio files
@@ -38,6 +41,7 @@ module MeditationPlayer
 
       stop if playing?
       @current_file = file_path
+      @start_time = Time.now
       @paused = false
       @process = spawn("ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", file_path,
                        :pgroup => true, %i[out err] => "/dev/null")
@@ -45,10 +49,11 @@ module MeditationPlayer
 
     # Stop currently playing audio
     #
-    # @return [void]
+    # @return [Float] the percentage of the file that was played (0.0 to 1.0)
     def stop
-      return unless @process
+      return 0.0 unless @process
 
+      progress = calculate_progress
       begin
         Process.kill("-TERM", -@process)
       rescue Errno::ESRCH
@@ -56,7 +61,9 @@ module MeditationPlayer
       end
       @process = nil
       @current_file = nil
+      @start_time = nil
       @paused = false
+      progress
     end
 
     # Check if audio is currently playing
@@ -83,6 +90,7 @@ module MeditationPlayer
 
       begin
         Process.kill("-STOP", -@process)
+        @pause_time = Time.now
         @paused = true
       rescue Errno::ESRCH
         # Process already terminated
@@ -96,6 +104,11 @@ module MeditationPlayer
       return unless paused?
 
       begin
+        # Adjust start time to account for pause duration
+        pause_duration = Time.now - @pause_time
+        @start_time += pause_duration
+        @pause_time = nil
+
         Process.kill("-CONT", -@process)
         @paused = false
       rescue Errno::ESRCH
@@ -108,6 +121,49 @@ module MeditationPlayer
     # @return [String, nil] filename or nil if not playing
     def current_file
       @current_file ? File.basename(@current_file) : nil
+    end
+
+    # Get the current playback progress as a percentage
+    #
+    # @return [Float] progress percentage (0.0 to 1.0)
+    def current_progress
+      calculate_progress if @current_file && @start_time
+    end
+
+    private
+
+    # Calculate the current playback progress
+    #
+    # @return [Float] progress percentage (0.0 to 1.0)
+    def calculate_progress
+      return 0.0 unless @current_file && @start_time
+
+      duration = get_file_duration(@current_file)
+      return 0.0 if duration <= 0
+
+      elapsed = if paused?
+                  # If paused, use the time when pause was initiated
+                  @pause_time - @start_time
+                else
+                  Time.now - @start_time
+                end
+
+      progress = elapsed / duration
+      [progress, 1.0].min # Cap at 1.0 (100%)
+    end
+
+    # Get the duration of an audio file in seconds
+    #
+    # @param file_path [String] path to audio file
+    # @return [Float] duration in seconds
+    def get_file_duration(file_path)
+      @file_durations[file_path] ||= begin
+        output = `ffprobe -v quiet -show_entries format=duration -of csv=p=0 "#{file_path}" \
+                   2>/dev/null`
+        output.strip.to_f
+      rescue StandardError
+        0.0
+      end
     end
   end
 end

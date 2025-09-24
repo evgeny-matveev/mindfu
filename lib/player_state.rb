@@ -108,16 +108,22 @@ module MeditationPlayer
     end
 
     def stop_playback
-      # If stopping while playing, mark current file as completed
-      @random_selector.record_played_file(current_file) if playing? && current_file
-      player.stop
+      progress = player.stop
+      # Only mark as completed if 90% or more was played
+      # Use the full path from the player, not the basename
+      current_file_path = @player.instance_variable_get(:@current_file)
+      @random_selector.record_played_file(current_file_path) if progress >= 0.9 && current_file_path
     end
 
     def go_to_next
       return if audio_files.empty?
 
-      # Mark current file as completed (90%+ listened) before moving to next
-      @random_selector.record_played_file(current_file) if playing? && current_file
+      # Stop current file and check progress before moving to next
+      progress = player.stop
+      # Only mark as completed if 90% or more was played
+      # Use the full path from the player, not the basename
+      current_file_path = @player.instance_variable_get(:@current_file)
+      @random_selector.record_played_file(current_file_path) if progress >= 0.9 && current_file_path
 
       if @random_mode
         next_file = @random_selector.next_random_file
