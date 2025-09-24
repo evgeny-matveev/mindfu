@@ -49,5 +49,5 @@ Thumbs.db
 ehthumbs.db
 Thumbs.db
 
-# Player state (optional - remove if you want to track state)
-# player_state.json
+# Player state (no longer tracked)
+player_state.json

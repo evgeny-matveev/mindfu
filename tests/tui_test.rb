@@ -80,8 +80,10 @@ module MeditationPlayer
       @tui.instance_variable_set(:@window, mock_window)
       @tui.instance_variable_set(:@running, true)
 
-      # Mock audio files to simulate having tracks
+      # Mock audio files to simulate having tracks and disable random mode
       @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
+        @state.instance_variable_set(:@random_mode, false)
+        @state.instance_variable_set(:@current_index, 0)
         initial_index = @state.current_index
         @tui.handle_input
         assert_equal initial_index + 1, @state.current_index
@@ -96,9 +98,10 @@ module MeditationPlayer
       @tui.instance_variable_set(:@window, mock_window)
       @tui.instance_variable_set(:@running, true)
 
-      # Mock audio files to simulate having tracks and start at index 1
-      @state.instance_variable_set(:@current_index, 1)
+      # Mock audio files to simulate having tracks and disable random mode
       @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
+        @state.instance_variable_set(:@random_mode, false)
+        @state.instance_variable_set(:@current_index, 1)
         initial_index = @state.current_index
         @tui.handle_input
         assert_equal initial_index - 1, @state.current_index
@@ -136,6 +139,8 @@ module MeditationPlayer
       @tui.instance_variable_set(:@window, mock_window)
       @tui.instance_variable_set(:@running, true)
       @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
+        @state.instance_variable_set(:@random_mode, false)
+        @state.instance_variable_set(:@current_index, 0)
         initial_index = @state.current_index
         @tui.handle_input
         assert_equal initial_index + 1, @state.current_index
@@ -144,12 +149,13 @@ module MeditationPlayer
 
     def test_russian_p_byte_code_goes_to_previous_track
       # Test P key position (Russian з = 183)
-      @state.instance_variable_set(:@current_index, 1)
       mock_window = Minitest::Mock.new
       mock_window.expect :getch, 183
       @tui.instance_variable_set(:@window, mock_window)
       @tui.instance_variable_set(:@running, true)
       @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
+        @state.instance_variable_set(:@random_mode, false)
+        @state.instance_variable_set(:@current_index, 1)
         initial_index = @state.current_index
         @tui.handle_input
         assert_equal initial_index - 1, @state.current_index

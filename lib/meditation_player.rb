@@ -3,7 +3,6 @@
 require_relative "audio_player"
 require_relative "player_state"
 require_relative "tui"
-require_relative "state_persistence"
 
 module MeditationPlayer
   # Main application controller for the meditation audio player
@@ -24,23 +23,18 @@ module MeditationPlayer
       @player = AudioPlayer.new
       @state = PlayerState.new(@player)
       @tui = TUI.new(@state)
-      @persistence = StatePersistence.new(@state)
     end
 
     # Run the meditation player application
     #
-    # Loads the previous state, starts the user interface,
-    # and saves the state when exiting.
+    # Starts the user interface with a fresh random file selection.
+    # Only recently played files are persisted for random selection.
     #
     # @return [void]
     def run
-      @persistence.load
-      begin
-        @tui.run
-      ensure
-        @state.stop
-        @persistence.save
-      end
+      @tui.run
+    ensure
+      @state.stop
     end
   end
 end

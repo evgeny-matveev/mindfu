@@ -48,8 +48,9 @@ module MeditationPlayer
       assert_equal "stopped", @state.state.to_s
     end
 
-    def test_current_index_initially_zero
-      assert_equal 0, @state.current_index
+    def test_current_index_is_valid
+      assert_operator @state.current_index, :>=, 0
+      assert_operator @state.current_index, :<, @state.audio_files.length if @state.audio_files.any?
     end
 
     def test_audio_files_delegated_to_player
@@ -57,16 +58,20 @@ module MeditationPlayer
     end
 
     def test_next_track_changes_index
-      # Mock audio files to simulate having tracks
+      # Mock audio files to simulate having tracks and disable random mode
       @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
+        @state.instance_variable_set(:@random_mode, false)
+        @state.instance_variable_set(:@current_index, 0)
         @state.next
         assert_equal 1, @state.current_index
       end
     end
 
     def test_previous_track_wraps_around
-      # Mock audio files to simulate having tracks
+      # Mock audio files to simulate having tracks and disable random mode
       @player.stub(:audio_files, ["file1.mp3", "file2.mp3"]) do
+        @state.instance_variable_set(:@random_mode, false)
+        @state.instance_variable_set(:@current_index, 0)
         @state.previous
         assert_equal 1, @state.current_index
       end

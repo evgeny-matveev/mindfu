@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "state_machines"
+require_relative "random_file_selector"
 
 module MeditationPlayer
   # Player state machine managing playback controls and file navigation
@@ -12,7 +13,7 @@ module MeditationPlayer
   # @author Your Name
   # @since 1.0.0
   class PlayerState
-    attr_reader :player, :current_index
+    attr_reader :player, :current_index, :random_selector
 
     # Initialize player state with audio player
     #
@@ -21,6 +22,9 @@ module MeditationPlayer
     def initialize(player)
       @player = player
       @current_index = 0
+      @random_selector = RandomFileSelector.new(self)
+      @random_mode = true
+      initialize_random_session
       super()
     end
 
@@ -78,6 +82,16 @@ module MeditationPlayer
       current_file ? File.basename(current_file) : nil
     end
 
+    # Initialize random session with a random starting file
+    #
+    # @return [void]
+    def initialize_random_session
+      return if audio_files.empty?
+
+      initial_file = @random_selector.initialize_session
+      @current_index = audio_files.index(initial_file) if initial_file
+    end
+
     private
 
     def play_current_file
@@ -100,15 +114,31 @@ module MeditationPlayer
     def go_to_next
       return if audio_files.empty?
 
-      @current_index = (@current_index + 1) % audio_files.length
-      play_current_file if playing?
+      if @random_mode
+        next_file = @random_selector.next_random_file
+        if next_file
+          @current_index = audio_files.index(next_file)
+          play_current_file if playing?
+        end
+      else
+        @current_index = (@current_index + 1) % audio_files.length
+        play_current_file if playing?
+      end
     end
 
     def go_to_previous
       return if audio_files.empty?
 
-      @current_index = @current_index.zero? ? audio_files.length - 1 : @current_index - 1
-      play_current_file if playing?
+      if @random_mode
+        prev_file = @random_selector.previous_file
+        if prev_file
+          @current_index = audio_files.index(prev_file)
+          play_current_file if playing?
+        end
+      else
+        @current_index = @current_index.zero? ? audio_files.length - 1 : @current_index - 1
+        play_current_file if playing?
+      end
     end
   end
 end
