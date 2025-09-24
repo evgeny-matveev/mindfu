@@ -33,11 +33,19 @@ A minimal TUI meditation audio player built with Ruby.
 
 ## Controls
 
+### English Keyboard Layout
 - `SPACE` - Play/Pause
 - `S` - Stop
 - `N` - Next track
 - `P` - Previous track
 - `Q` - Quit
+
+### Russian Keyboard Layout
+- `SPACE` - Play/Pause
+- `Ы` - Stop
+- `Т` - Next track
+- `З` - Previous track
+- `Й` - Quit
 
 ## Running Tests
 

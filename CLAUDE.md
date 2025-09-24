@@ -95,6 +95,22 @@ The meditation player follows a modular architecture with clear separation of co
 - Supports formats: mp3, mp4, wav, ogg
 - Files are automatically discovered and sorted alphabetically
 
+### Keyboard Controls
+
+#### English Layout
+- `SPACE`: Play/Pause toggle
+- `S`: Stop playback
+- `N`: Next track
+- `P`: Previous track
+- `Q`: Quit application
+
+#### Russian Layout
+- `SPACE`: Play/Pause toggle
+- `Ы`: Stop playback
+- `Т`: Next track
+- `З`: Previous track
+- `Й`: Quit application
+
 ### State Machine Events
 
 The player responds to these events:

@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # Simple script to run all tests
 Dir.glob("tests/*_test.rb").each do |test_file|

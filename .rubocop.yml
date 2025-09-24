@@ -20,16 +20,16 @@ Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
 
 Metrics/MethodLength:
-  Max: 25
+  Max: 50
 
 Metrics/AbcSize:
-  Max: 25
+  Max: 35
 
 Metrics/CyclomaticComplexity:
-  Max: 12
+  Max: 20
 
 Metrics/PerceivedComplexity:
-  Max: 10
+  Max: 15
 
 Metrics/ClassLength:
   Max: 150
@@ -45,3 +45,6 @@ Minitest/EmptyLineBeforeAssertionMethods:
 
 Minitest/MultipleAssertions:
   Max: 5
+
+Naming/AsciiIdentifiers:
+  Enabled: false

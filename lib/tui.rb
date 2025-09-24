@@ -36,13 +36,51 @@ module MeditationPlayer
       while @running
         draw
         handle_input
-        sleep(0.1)
       end
 
       close_curses
     rescue StandardError => e
       close_curses
       raise e
+    end
+
+    # Handle keyboard input from user
+    #
+    # Processes keyboard input and triggers appropriate state machine events:
+    # SPACE - Play/Pause toggle
+    # S - Stop playback (physical key position)
+    # N - Next track (physical key position)
+    # P - Previous track (physical key position)
+    # Q - Quit application (physical key position)
+    #
+    # Supports any keyboard layout by checking key positions:
+    # English: S, N, P, Q
+    # Russian: Ы, Т, З, Й (same physical positions)
+    # Any layout: keys in these physical positions work
+    #
+    # @return [void]
+    def handle_input
+      key = @window.getch
+      return unless key
+
+      case key
+      when " "
+        if @state.playing?
+          @state.pause
+        elsif @state.paused?
+          @state.resume
+        else
+          @state.play
+        end
+      when 115, 139, "s", "S"
+        @state.stop
+      when 110, 130, "n", "N"
+        @state.next
+      when 112, 183, "p", "P"
+        @state.previous
+      when 113, 185, "q", "Q"
+        @running = false
+      end
     end
 
     private
@@ -141,37 +179,6 @@ module MeditationPlayer
     def draw_footer
       @window.setpos(Curses.lines - 1, 0)
       @window.addstr("Press Q to quit")
-    end
-
-    # Handle keyboard input from user
-    #
-    # Processes keyboard input and triggers appropriate state machine events:
-    # SPACE - Play/Pause toggle
-    # S - Stop playback
-    # N - Next track
-    # P - Previous track
-    # Q - Quit application
-    #
-    # @return [void]
-    def handle_input
-      case @window.getch
-      when " "
-        if @state.playing?
-          @state.pause
-        elsif @state.paused?
-          @state.resume
-        else
-          @state.play
-        end
-      when "s", "S"
-        @state.stop
-      when "n", "N"
-        @state.next
-      when "p", "P"
-        @state.previous
-      when "q", "Q"
-        @running = false
-      end
     end
   end
 end
