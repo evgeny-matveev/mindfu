@@ -157,26 +157,50 @@ module MeditationPlayer
     #
     # @return [void]
     def terminate_mpv_process
-      if @mpv_pid
-        begin
-          # Send SIGTERM to the process group
-          Process.kill("TERM", -@mpv_pid)
-        rescue Errno::ESRCH
-          # Process already terminated, try to kill just the process
-          begin
-            Process.kill("TERM", @mpv_pid)
-          rescue Errno::ESRCH
-            # Process already terminated
-          end
+      return unless @mpv_pid
+
+      # Try to terminate the process gracefully
+      begin
+        Process.kill("TERM", @mpv_pid)
+
+        # Wait for graceful termination
+        10.times do
+          break unless process_running?(@mpv_pid)
+
+          sleep 0.1
         end
-        @mpv_pid = nil
+
+        # Force kill if still running
+        Process.kill("KILL", @mpv_pid) if process_running?(@mpv_pid)
+      rescue Errno::ESRCH
+        # Process already terminated
       end
 
-      File.delete(@mpv_socket) if @mpv_socket && File.exist?(@mpv_socket)
+      # Clean up socket file
+      if @mpv_socket && File.exist?(@mpv_socket)
+        begin
+          File.delete(@mpv_socket)
+        rescue Errno::ENOENT
+          # Socket already deleted
+        end
+      end
+
+      @mpv_pid = nil
       @mpv_socket = nil
       @current_file = nil
       @playing = false
       @paused = false
+    end
+
+    # Check if a specific process is running
+    #
+    # @param pid [Integer] process ID to check
+    # @return [Boolean] true if running, false otherwise
+    def process_running?(pid)
+      Process.kill(0, pid)
+      true
+    rescue Errno::ESRCH
+      false
     end
 
     # Check if mpv process is running
