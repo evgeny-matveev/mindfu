@@ -76,7 +76,7 @@ module MeditationPlayer
     # @return [String, nil] next random filename or nil if no files available
     def next_random_file
       next_file = select_random_file
-      record_played_file(next_file) if next_file
+      add_to_session_history(next_file) if next_file
       next_file
     end
 
@@ -109,7 +109,7 @@ module MeditationPlayer
     # @return [String, nil] initial random filename or nil if no files available
     def initialize_session
       initial_file = select_random_file
-      record_played_file(initial_file) if initial_file
+      add_to_session_history(initial_file) if initial_file
       initial_file
     end
 

@@ -68,11 +68,12 @@ module MeditationPlayer
         @selector.record_played_file("file1.mp3")
 
         # Verify it was saved by checking if it's excluded from selection
-        @selector.stub(:load_recently_played, ["file1.mp3"]) do
-          selected_file = @selector.select_random_file
-          # Should prefer other files over file1.mp3
-          refute_equal "file1.mp3", selected_file unless mock_files.length == 1
-        end
+        recently_played = @selector.instance_variable_get(:@recently_played_files)
+        assert_includes recently_played, "file1.mp3"
+
+        selected_file = @selector.select_random_file
+        # Should prefer other files over file1.mp3
+        refute_equal "file1.mp3", selected_file unless mock_files.length == 1
       end
     end
 
@@ -119,6 +120,9 @@ module MeditationPlayer
       @player.stub(:audio_files, mock_files) do
         # Stub random selection to return specific file
         @selector.stub(:select_random_file, "file3.mp3") do
+          # Clear recently played files for this test
+          @selector.instance_variable_set(:@recently_played_files, [])
+
           next_file = @selector.next_random_file
 
           assert_equal "file3.mp3", next_file
@@ -126,6 +130,10 @@ module MeditationPlayer
           # Verify it was added to session history
           history = @selector.session_history
           assert_includes history, "file3.mp3"
+
+          # Verify it was NOT added to recently played files
+          recently_played = @selector.instance_variable_get(:@recently_played_files)
+          refute_includes recently_played, "file3.mp3"
         end
       end
     end
@@ -163,6 +171,9 @@ module MeditationPlayer
 
       @player.stub(:audio_files, mock_files) do
         @selector.stub(:select_random_file, "file2.mp3") do
+          # Clear recently played files for this test
+          @selector.instance_variable_set(:@recently_played_files, [])
+
           initial_file = @selector.initialize_session
 
           assert_equal "file2.mp3", initial_file
@@ -170,6 +181,10 @@ module MeditationPlayer
           # Verify it was added to session history
           history = @selector.session_history
           assert_includes history, "file2.mp3"
+
+          # Verify it was NOT added to recently played files
+          recently_played = @selector.instance_variable_get(:@recently_played_files)
+          refute_includes recently_played, "file2.mp3"
         end
       end
     end

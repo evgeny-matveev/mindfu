@@ -10,7 +10,7 @@ module MeditationPlayer
       player = AudioPlayer.new
 
       # Clean up any existing persistence
-      recently_played_file = "recently_played.json"
+      recently_played_file = "tmp/recently_played.json"
       FileUtils.rm_f(recently_played_file)
 
       # Create first session
@@ -35,9 +35,10 @@ module MeditationPlayer
       recently_played1 = state1.random_selector.instance_variable_get(:@recently_played_files)
       recently_played2 = state2.random_selector.instance_variable_get(:@recently_played_files)
 
-      # Second session should have the first session's file plus its own
-      assert_equal recently_played1.length + 1, recently_played2.length
-      assert_includes recently_played2, recently_played1.first
+      # Files are only added to recently played when they're completed (90% listened)
+      # Since no files have been completed, both should be empty
+      assert_equal 0, recently_played1.length
+      assert_equal 0, recently_played2.length
 
       # Clean up
       FileUtils.rm_f(recently_played_file)
@@ -65,16 +66,16 @@ module MeditationPlayer
       recently_played_file = "recently_played.json"
 
       # Clean up any existing file
-      FileUtils.rm_f(recently_played_file)
+      FileUtils.rm_f("tmp/recently_played.json")
 
       # Create first session and record some files
       player = AudioPlayer.new
       state1 = PlayerState.new(player)
 
-      # Get initial recently played files (includes the random initial file)
+      # Get initial recently played files (should be empty since no files completed)
       state1.random_selector.instance_variable_get(:@recently_played_files).dup
 
-      # Simulate playing some files
+      # Simulate completing some files (90%+ listened)
       if player.audio_files.length >= 3
         state1.random_selector.record_played_file(player.audio_files[0])
         state1.random_selector.record_played_file(player.audio_files[1])
@@ -87,8 +88,9 @@ module MeditationPlayer
       state2 = PlayerState.new(player)
       final_recently_played2 = state2.random_selector.instance_variable_get(:@recently_played_files)
 
-      # Second session should have all the files from first session plus its own new random file
-      assert_equal final_recently_played1.length + 1, final_recently_played2.length
+      # Second session should have the same recently played files as first session
+      # No new random file should be added to recently played on initialization
+      assert_equal final_recently_played1.length, final_recently_played2.length
       final_recently_played1.each { |file| assert_includes final_recently_played2, file }
 
       # Clean up
