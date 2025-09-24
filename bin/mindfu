@@ -2,9 +2,9 @@
 # frozen_string_literal: true
 
 # Add lib directory to load path
-$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')))
+$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
-require 'meditation_player'
+require "meditation_player"
 
 # Main entry point for the meditation player application
 MeditationPlayer::App.new.run

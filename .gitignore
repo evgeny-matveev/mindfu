@@ -19,6 +19,7 @@ Thumbs.db
 /test/tmp/
 /test/version_tmp/
 /tmp/
+!/tmp/.keep
 
 # Yardoc
 /.yardoc/

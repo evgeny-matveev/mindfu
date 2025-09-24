@@ -17,7 +17,7 @@ module MeditationPlayer
     # Maximum percentage of files to exclude from random selection
     MAX_RECENT_PERCENTAGE = 0.9
     # Persistence file for recently played files
-    RECENTLY_PLAYED_FILE = "recently_played.json"
+    RECENTLY_PLAYED_FILE = "tmp/recently_played.json"
 
     # Initialize RandomFileSelector with player state
     #
