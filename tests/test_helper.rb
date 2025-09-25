@@ -9,12 +9,16 @@ module MeditationPlayer
     def setup
       # Clean up any existing mpv processes before each test
       cleanup_mpv_processes
+      # Clean up recently played file state
+      cleanup_recently_played_file
       super
     end
 
     def teardown
       # Clean up any mpv processes after each test
       cleanup_mpv_processes
+      # Clean up recently played file state
+      cleanup_recently_played_file
       super
     end
 
@@ -39,6 +43,14 @@ module MeditationPlayer
       rescue => e
         # Ignore errors in cleanup
       end
+    end
+
+    def cleanup_recently_played_file
+      # Clean up the test-specific recently played file to ensure test isolation
+      test_recently_played_file = "tmp/test_recently_played.json"
+      File.delete(test_recently_played_file) if File.exist?(test_recently_played_file)
+    rescue => e
+      # Ignore errors in cleanup
     end
   end
 end

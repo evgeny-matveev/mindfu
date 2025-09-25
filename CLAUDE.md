@@ -1,12 +1,11 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Development Principles
 
 - **TDD Approach**: Always write tests first, then implement functionality. Ensure all tests pass before considering a feature complete.
 - **Documentation**: Update YARD documentation and README.md after making changes to any module or method.
 - **KISS/YAGNI**: Follow Keep It Simple, Stupid and You Ain't Gonna Need It principles. Avoid over-engineering.
+- **DRY**: Follow Don't Repeat Yourself principle. Avoid duplicating code, logic, or configuration. Extract common functionality into reusable components.
 - **Minimal Code**: Strive for ultra-minimal solutions. The less code, the better. Remove any unnecessary complexity.
 - **Resource Management**: In tests, ensure all started processes or playing audio files are properly stopped/cleaned up to prevent resource leaks.
 
@@ -14,46 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Running the Application
 ```bash
-# Install dependencies
-bundle install
-
-# Run the main application
 bin/mindfu
-
-# Run with specific audio files in audio_files/ directory
-```
-
-### Testing
-```bash
-# Run all tests (simplest)
-ruby tests/test_all.rb
-
-# Alternative ways to run all tests
-find tests -name "*_test.rb" -exec ruby -Ilib {} \;
-ruby -Ilib tests/*_test.rb
-
-# Run specific test file
-ruby -Ilib tests/mpv_player_test.rb
-ruby -Ilib tests/player_state_test.rb
-ruby -Ilib tests/random_file_selector_test.rb
-
-# Run tests with test helper
-ruby -Ilib tests/test_helper.rb
-```
-
-### Code Quality
-```bash
-# Run Rubocop linting
-bundle exec rubocop
-
-# Run Rubocop with auto-correction
-bundle exec rubocop -A
-```
-
-### Documentation
-```bash
-# Generate YARD documentation
-bundle exec yard
 ```
 
 ## Architecture
@@ -91,12 +51,6 @@ The meditation player follows a modular architecture with clear separation of co
 - **Error Handling**: Graceful degradation when mpv processes fail
 - **IPC Communication**: JSON-based Inter-Process Communication for accurate progress tracking
 
-### Audio File Handling
-
-- Audio files must be placed in `audio_files/` directory
-- Supports formats: mp3, mp4, wav, ogg
-- Files are automatically discovered and sorted alphabetically
-
 ### Keyboard Controls
 
 #### English Layout
@@ -105,13 +59,6 @@ The meditation player follows a modular architecture with clear separation of co
 - `N`: Next track
 - `P`: Previous track
 - `Q`: Quit application
-
-#### Russian Layout
-- `SPACE`: Play/Pause toggle
-- `Ы`: Stop playback
-- `Т`: Next track
-- `З`: Previous track
-- `Й`: Quit application
 
 ### State Machine Events
 
@@ -132,12 +79,3 @@ mpv runs in background process groups with:
 - Output redirected to `/dev/null`
 - Proper cleanup on application exit
 
-### Testing Strategy
-
-Tests focus on:
-- State machine transitions and event handling
-- Process management (mocked for test safety)
-- State persistence and restoration
-- Component integration
-
-All tests use Minitest and follow a functional approach with minimal mocking.

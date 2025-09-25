@@ -18,13 +18,17 @@ module MeditationPlayer
     MAX_RECENT_FILES = 10
     # Persistence file for recently played files
     RECENTLY_PLAYED_FILE = "tmp/recently_played.json"
+    # Test-specific persistence file
+    TEST_RECENTLY_PLAYED_FILE = "tmp/test_recently_played.json"
 
     # Initialize RandomFileSelector with player state
     #
     # @param state [PlayerState] the player state for audio file access
+    # @param test_mode [Boolean] whether to use test-specific state file
     # @return [RandomFileSelector] new instance
-    def initialize(state)
+    def initialize(state, test_mode = false)
       @state = state
+      @test_mode = test_mode
       @session_history = []
       @recently_played_files = load_recently_played
       @current_position = -1
@@ -138,10 +142,11 @@ module MeditationPlayer
     #
     # @return [Array<String>] array of recently played filenames
     def load_recently_played
-      return [] unless File.exist?(RECENTLY_PLAYED_FILE)
+      file_to_load = @test_mode ? TEST_RECENTLY_PLAYED_FILE : RECENTLY_PLAYED_FILE
+      return [] unless File.exist?(file_to_load)
 
       begin
-        data = JSON.parse(File.read(RECENTLY_PLAYED_FILE))
+        data = JSON.parse(File.read(file_to_load))
         data["recently_played"] || []
       rescue JSON::ParserError, Errno::ENOENT
         []
@@ -152,12 +157,13 @@ module MeditationPlayer
     #
     # @return [void]
     def save_recently_played
+      file_to_save = @test_mode ? TEST_RECENTLY_PLAYED_FILE : RECENTLY_PLAYED_FILE
       data = {
         recently_played: @recently_played_files,
         timestamp: Time.now.iso8601
       }
 
-      File.write(RECENTLY_PLAYED_FILE, JSON.pretty_generate(data))
+      File.write(file_to_save, JSON.pretty_generate(data))
     end
 
     # Enforce the last-10 limit on recently played files

@@ -8,7 +8,7 @@ module MeditationPlayer
     def setup
       @player = MPVPlayer.new
       @state = PlayerState.new(@player)
-      @selector = RandomFileSelector.new(@state)
+      @selector = RandomFileSelector.new(@state, test_mode: true)
     end
 
     def teardown
@@ -37,7 +37,7 @@ module MeditationPlayer
 
       @player.stub(:audio_files, mock_files) do
         # Create a new selector with stubbed recently played files
-        @selector = RandomFileSelector.new(@state)
+        @selector = RandomFileSelector.new(@state, test_mode: true)
         @selector.instance_variable_set(:@recently_played_files, recent_files)
 
         selected_file = @selector.select_random_file
