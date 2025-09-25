@@ -40,27 +40,22 @@ module MeditationPlayer
       while @running
         current_time = Time.now
 
-        # Update display every 100ms when playing, otherwise every 500ms
-        update_interval = @state.playing? ? 0.1 : 0.5
+        # Update display every 250ms when playing, otherwise every 1000ms
+        update_interval = @state.playing? ? 0.25 : 1.0
 
         if current_time - @last_update >= update_interval
           draw
           @last_update = current_time
         end
 
-        # Always handle input, but use different approaches based on state
+        # Handle input with proper sleep to prevent CPU spinning
         @window.nodelay = true
         key = @window.getch
         @window.nodelay = false
-        if @state.playing?
-          # Non-blocking input check when playing
-          process_key(key) if key
-        else
-          # Non-blocking input check when not playing too (more responsive)
-          process_key(key) if key
-          # Small sleep to prevent CPU spinning when not playing
-          sleep 0.05
-        end
+        process_key(key) if key
+
+        # Sleep to prevent CPU spinning - longer when not playing
+        sleep @state.playing? ? 0.1 : 0.2
       end
 
       close_curses

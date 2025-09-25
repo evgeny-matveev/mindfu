@@ -22,7 +22,7 @@ module MeditationPlayer
     def initialize(player)
       @player = player
       @current_index = 0
-      @random_selector = RandomFileSelector.new(self)
+      @random_selector = RandomFileSelector.new(self, test_mode: false)
       @random_mode = true
       initialize_random_session
       super()

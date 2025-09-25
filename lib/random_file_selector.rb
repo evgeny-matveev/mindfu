@@ -26,7 +26,7 @@ module MeditationPlayer
     # @param state [PlayerState] the player state for audio file access
     # @param test_mode [Boolean] whether to use test-specific state file
     # @return [RandomFileSelector] new instance
-    def initialize(state, test_mode = false)
+    def initialize(state, test_mode: false)
       @state = state
       @test_mode = test_mode
       @session_history = []

@@ -8,7 +8,7 @@ module MeditationPlayer
     def setup
       @player = MPVPlayer.new
       @state = PlayerState.new(@player)
-      @selector = RandomFileSelector.new(@state)
+      @selector = RandomFileSelector.new(@state, test_mode: false)
     end
 
     def teardown

@@ -8,7 +8,7 @@ module MeditationPlayer
     def setup
       @player = MPVPlayer.new
       @state = PlayerState.new(@player)
-      @selector = RandomFileSelector.new(@state)
+      @selector = RandomFileSelector.new(@state, test_mode: false)
 
       # Clear any existing recently played file
       FileUtils.rm_f(RandomFileSelector::RECENTLY_PLAYED_FILE)
