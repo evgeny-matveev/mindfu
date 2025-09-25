@@ -37,6 +37,10 @@ module MeditationPlayer
       # Allow any other calls
       def @mock_window.method_missing(*args); end
 
+      def @mock_window.respond_to_missing?(*_args)
+        true
+      end
+
       # Call private draw method for testing
       @tui.send(:draw)
 

@@ -40,6 +40,9 @@ module MeditationPlayer
       while @running
         current_time = Time.now
 
+        # Check for natural completion when playing
+        @state.check_completion if @state.playing?
+
         # Update display every 250ms when playing, otherwise every 1000ms
         update_interval = @state.playing? ? 0.25 : 1.0
 

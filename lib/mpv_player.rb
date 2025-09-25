@@ -27,6 +27,7 @@ module MeditationPlayer
       @playing = false
       @paused = false
       @file_durations = {}
+      @completion_callback = nil
     end
 
     # Get list of available audio files
@@ -128,6 +129,39 @@ module MeditationPlayer
       rescue StandardError
         0.0
       end
+    end
+
+    # Set callback for when playback completes naturally
+    #
+    # @param callback [Proc] callback to execute when playback completes
+    # @return [void]
+    def on_completion(&callback)
+      @completion_callback = callback
+    end
+
+    # Check if playback has completed naturally
+    #
+    # @return [Boolean] true if mpv process has terminated naturally
+    def playback_completed?
+      return false unless @mpv_pid && @playing
+
+      !process_running?(@mpv_pid)
+    end
+
+    # Check for completion and trigger callback if needed
+    #
+    # @return [void]
+    def check_completion
+      return unless playback_completed?
+
+      # Get progress before cleanup
+      progress = current_progress
+
+      # Clean up the process
+      terminate_mpv_process
+
+      # Trigger completion callback with progress
+      @completion_callback&.call(progress)
     end
 
     # Send command to mpv via IPC

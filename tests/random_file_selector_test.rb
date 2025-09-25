@@ -46,8 +46,8 @@ module MeditationPlayer
 
         # Should not select from recently played files
         refute_includes recent_files, File.basename(selected_file)
-        assert_includes ["/fake/path/new_file1.mp3", "/fake/path/new_file2.mp3", "/fake/path/new_file3.mp3"],
-                        selected_file
+        assert_includes ["/fake/path/new_file1.mp3", "/fake/path/new_file2.mp3",
+                         "/fake/path/new_file3.mp3"], selected_file
       end
     end
 

@@ -25,6 +25,7 @@ module MeditationPlayer
       @random_selector = RandomFileSelector.new(self, test_mode: false)
       @random_mode = true
       initialize_random_session
+      setup_completion_callback
       super()
     end
 
@@ -92,6 +93,13 @@ module MeditationPlayer
       @current_index = audio_files.index(initial_file) if initial_file
     end
 
+    # Check for natural completion and handle if needed
+    #
+    # @return [void]
+    def check_completion
+      @player.check_completion
+    end
+
     private
 
     def play_current_file
@@ -150,6 +158,30 @@ module MeditationPlayer
         @current_index = @current_index.zero? ? audio_files.length - 1 : @current_index - 1
         play_current_file if playing?
       end
+    end
+
+    # Set up completion callback for natural playback completion
+    #
+    # @return [void]
+    def setup_completion_callback
+      @player.on_completion do |progress|
+        handle_natural_completion(progress)
+      end
+    end
+
+    # Handle natural completion when mpv process terminates
+    #
+    # @param progress [Float] the progress when playback completed
+    # @return [void]
+    def handle_natural_completion(progress)
+      return unless progress >= 0.9
+
+      # Record the completed file in history
+      current_file_path = @player.instance_variable_get(:@current_file)
+      @random_selector.record_played_file(current_file_path) if current_file_path
+
+      # Transition to stopped state
+      stop if playing?
     end
   end
 end
