@@ -16,6 +16,64 @@
 bin/mindfu
 ```
 
+### Testing
+```bash
+
+# Run all tests
+find tests -name "*_test.rb" -exec ruby -Ilib {} \;
+ruby -Ilib tests/*_test.rb
+
+# Run specific test file
+ruby -Ilib tests/mpv_player_test.rb
+ruby -Ilib tests/player_state_test.rb
+ruby -Ilib tests/random_file_selector_test.rb
+
+# Run tests with test helper
+ruby -Ilib tests/test_helper.rb
+
+# Run performance tests
+find tests/performance_tests -name "*.rb" -exec ruby -Ilib {} \;
+ruby -Ilib tests/performance_tests/performance_test.rb
+ruby -Ilib tests/performance_tests/tui_cpu_test.rb
+ruby -Ilib tests/performance_tests/test_idle_specific.rb
+ruby -Ilib tests/performance_tests/verify_fix.rb
+
+# Run Rubocop on performance tests
+bundle exec rubocop tests/performance_tests/
+```
+
+### Testing Strategy
+
+Tests focus on:
+- State machine transitions and event handling
+- Process management (mocked for test safety)
+- State persistence and restoration
+- Component integration
+- Performance and CPU usage monitoring
+
+Performance tests specifically focus on:
+- CPU usage optimization in TUI main loop
+- Idle state performance
+- Memory usage patterns
+- Process cleanup verification
+
+All tests use Minitest and follow a functional approach with minimal mocking.
+
+### Code Quality
+```bash
+# Run Rubocop linting
+bundle exec rubocop
+
+# Run Rubocop with auto-correction
+bundle exec rubocop -A
+```
+
+### Documentation
+```bash
+# Generate YARD documentation
+bundle exec yard
+```
+
 ## Architecture
 
 The meditation player follows a modular architecture with clear separation of concerns:

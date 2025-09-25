@@ -10,6 +10,7 @@ A minimal TUI meditation audio player built with Ruby.
 - JSON state persistence
 - Minitest suite
 - YARD documentation
+- Performance tests for CPU optimization
 
 ## Requirements
 
@@ -75,9 +76,19 @@ find tests -name "*_test.rb" -exec ruby -Ilib {} \;
 ruby -Ilib tests/*_test.rb
 
 # Run specific test file
-ruby -Ilib tests/audio_player_test.rb
+ruby -Ilib tests/mpv_player_test.rb
 ruby -Ilib tests/player_state_test.rb
 ruby -Ilib tests/random_file_selector_test.rb
+
+# Run performance tests
+find tests/performance_tests -name "*.rb" -exec ruby -Ilib {} \;
+ruby -Ilib tests/performance_tests/performance_test.rb
+ruby -Ilib tests/performance_tests/tui_cpu_test.rb
+ruby -Ilib tests/performance_tests/test_idle_specific.rb
+ruby -Ilib tests/performance_tests/verify_fix.rb
+
+# Run linting on performance tests
+bundle exec rubocop tests/performance_tests/
 ```
 
 ## Documentation
@@ -100,6 +111,8 @@ bundle exec yard
 │   ├── tui.rb                # Terminal UI
 │   └── random_file_selector.rb  # Random file selection with history
 ├── tests/                    # Minitest suite
+│   ├── *_test.rb            # Unit tests
+│   └── performance_tests/    # Performance and CPU tests
 ├── tmp/                      # Temporary files (recently_played.json)
 └── audio_files/              # Place audio files here
 ```
