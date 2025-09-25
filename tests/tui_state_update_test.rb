@@ -11,16 +11,14 @@ module MeditationPlayer
     end
 
     def teardown
-      begin
-        @state.stop if @state
-        @player&.stop
-        # Double-check and force kill any remaining mpv processes
-        @player&.terminate_mpv_process if @player.respond_to?(:terminate_mpv_process)
-      rescue => e
-        puts "Error in teardown: #{e.message}"
-        # Try to force stop anyway
-        @player&.terminate_mpv_process if @player.respond_to?(:terminate_mpv_process)
-      end
+      @state&.stop
+      @player&.stop
+      # Double-check and force kill any remaining mpv processes
+      @player&.terminate_mpv_process if @player.respond_to?(:terminate_mpv_process)
+    rescue StandardError => e
+      puts "Error in teardown: #{e.message}"
+      # Try to force stop anyway
+      @player&.terminate_mpv_process if @player.respond_to?(:terminate_mpv_process)
     end
 
     def test_tui_updates_display_on_state_change
@@ -105,7 +103,7 @@ module MeditationPlayer
       mock_window.verify
     ensure
       # Clean up - stop playback to prevent zombie processes
-      @state.stop if @state && @state.playing?
+      @state.stop if @state&.playing?
     end
 
     def test_tui_displays_paused_state_correctly

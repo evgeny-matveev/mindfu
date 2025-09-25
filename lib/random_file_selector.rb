@@ -46,9 +46,9 @@ module MeditationPlayer
       return nil if available_files.empty?
 
       # Convert recently played basenames to full paths for comparison
-      recently_played_full_paths = @recently_played_files.map do |basename|
+      recently_played_full_paths = @recently_played_files.filter_map do |basename|
         available_files.find { |full_path| File.basename(full_path) == basename }
-      end.compact
+      end
 
       # Get files that aren't recently played
       candidates = available_files - recently_played_full_paths

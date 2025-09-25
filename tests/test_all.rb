@@ -13,29 +13,7 @@ end
 # Final cleanup of any remaining processes
 puts "Performing final cleanup..."
 
-# Find and kill any mpv processes that might be running
-begin
-  mpv_pids = `ps aux | grep mpv | grep -v grep | awk '{print $2}'`.split
-  if mpv_pids.any?
-    puts "Found #{mpv_pids.length} mpv processes to clean up..."
-    mpv_pids.each do |pid|
-      next if pid.empty?
-      begin
-        Process.kill("TERM", pid.to_i)
-        # Wait a bit for graceful termination
-        sleep 0.1
-        # Force kill if still running
-        Process.kill("KILL", pid.to_i)
-        puts "Terminated mpv process #{pid}"
-      rescue Errno::ESRCH, Errno::EPERM
-        # Process already terminated or no permission
-      end
-    end
-  else
-    puts "No mpv processes found to clean up."
-  end
-rescue => e
-  puts "Error during cleanup: #{e.message}"
-end
+# Use the shared cleanup method from test_helper
+MeditationPlayer::Test.new.cleanup_mpv_process_group(verbose: true)
 
 puts "Cleanup completed."

@@ -17,7 +17,8 @@ module MeditationPlayer
 
     def test_selects_random_file_from_available_files
       # Mock audio files with full paths (like real implementation)
-      mock_files = ["/fake/path/file1.mp3", "/fake/path/file2.mp3", "/fake/path/file3.mp3", "/fake/path/file4.mp3"]
+      mock_files = ["/fake/path/file1.mp3", "/fake/path/file2.mp3", "/fake/path/file3.mp3",
+                    "/fake/path/file4.mp3"]
       @player.stub(:audio_files, mock_files) do
         # Test that it selects a valid file
         selected_file = @selector.select_random_file
@@ -33,7 +34,8 @@ module MeditationPlayer
 
       # Mock full paths (like real implementation)
       mock_files = recent_files.map { |f| "/fake/path/#{f}" } +
-                   ["/fake/path/new_file1.mp3", "/fake/path/new_file2.mp3", "/fake/path/new_file3.mp3"]
+                   ["/fake/path/new_file1.mp3", "/fake/path/new_file2.mp3",
+                    "/fake/path/new_file3.mp3"]
 
       @player.stub(:audio_files, mock_files) do
         # Create a new selector with stubbed recently played files
@@ -44,7 +46,8 @@ module MeditationPlayer
 
         # Should not select from recently played files
         refute_includes recent_files, File.basename(selected_file)
-        assert_includes ["/fake/path/new_file1.mp3", "/fake/path/new_file2.mp3", "/fake/path/new_file3.mp3"], selected_file
+        assert_includes ["/fake/path/new_file1.mp3", "/fake/path/new_file2.mp3", "/fake/path/new_file3.mp3"],
+                        selected_file
       end
     end
 
@@ -112,12 +115,14 @@ module MeditationPlayer
         @selector.add_to_session_history("/fake/path/file3.mp3")
 
         history = @selector.session_history
-        assert_equal ["/fake/path/file1.mp3", "/fake/path/file2.mp3", "/fake/path/file3.mp3"], history
+        assert_equal ["/fake/path/file1.mp3", "/fake/path/file2.mp3", "/fake/path/file3.mp3"],
+                     history
       end
     end
 
     def test_next_selects_random_file_and_adds_to_history
-      mock_files = ["/fake/path/file1.mp3", "/fake/path/file2.mp3", "/fake/path/file3.mp3", "/fake/path/file4.mp3"]
+      mock_files = ["/fake/path/file1.mp3", "/fake/path/file2.mp3", "/fake/path/file3.mp3",
+                    "/fake/path/file4.mp3"]
 
       @player.stub(:audio_files, mock_files) do
         # Stub random selection to return specific file
@@ -135,7 +140,7 @@ module MeditationPlayer
 
           # Verify it was NOT added to recently played files
           recently_played = @selector.instance_variable_get(:@recently_played_files)
-          refute_includes recently_played, "file3.mp3"  # Should be basename
+          refute_includes recently_played, "file3.mp3" # Should be basename
         end
       end
     end
