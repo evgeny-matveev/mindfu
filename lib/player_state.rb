@@ -1,19 +1,18 @@
 # frozen_string_literal: true
 
 require "state_machines"
-require_relative "random_file_selector"
 
 module MeditationPlayer
   # Player state machine managing playback controls and file navigation
-  # Handles play/pause/next/prev operations with state transitions
+  # Handles play/pause operations with state transitions
   #
   # This class manages the player's state machine and provides a clean interface
-  # for controlling audio playback, including file navigation and state transitions.
+  # for controlling audio playback and state transitions.
   #
-  # @author Your Name
+  # @author Yevgeny Matveyev
   # @since 1.0.0
   class PlayerState
-    attr_reader :player, :current_index, :random_selector
+    attr_reader :player, :current_index
 
     # Initialize player state with audio player
     #
@@ -22,10 +21,6 @@ module MeditationPlayer
     def initialize(player)
       @player = player
       @current_index = 0
-      @random_selector = RandomFileSelector.new(self, test_mode: false)
-      @random_mode = true
-      initialize_random_session
-      setup_completion_callback
       super()
     end
 
@@ -46,20 +41,10 @@ module MeditationPlayer
         transition %i[playing paused] => :stopped
       end
 
-      event :next do
-        transition any => same
-      end
-
-      event :previous do
-        transition any => same
-      end
-
       before_transition on: :play, do: :play_current_file
       after_transition on: :pause, do: :pause_playback
       after_transition on: :resume, do: :resume_playback
       after_transition on: :stop, do: :stop_playback
-      after_transition on: :next, do: :go_to_next
-      after_transition on: :previous, do: :go_to_previous
     end
 
     # Get list of available audio files from player
@@ -83,23 +68,6 @@ module MeditationPlayer
       current_file ? File.basename(current_file) : nil
     end
 
-    # Initialize random session with a random starting file
-    #
-    # @return [void]
-    def initialize_random_session
-      return if audio_files.empty?
-
-      initial_file = @random_selector.initialize_session
-      @current_index = audio_files.index(initial_file) if initial_file
-    end
-
-    # Check for natural completion and handle if needed
-    #
-    # @return [void]
-    def check_completion
-      @player.check_completion
-    end
-
     private
 
     def play_current_file
@@ -116,72 +84,7 @@ module MeditationPlayer
     end
 
     def stop_playback
-      progress = player.stop
-      # Only mark as completed if 90% or more was played
-      # Use the full path from the player, not the basename
-      current_file_path = @player.instance_variable_get(:@current_file)
-      @random_selector.record_played_file(current_file_path) if progress >= 0.9 && current_file_path
-    end
-
-    def go_to_next
-      return if audio_files.empty?
-
-      # Stop current file and check progress before moving to next
-      progress = player.stop
-      # Only mark as completed if 90% or more was played
-      # Use the full path from the player, not the basename
-      current_file_path = @player.instance_variable_get(:@current_file)
-      @random_selector.record_played_file(current_file_path) if progress >= 0.9 && current_file_path
-
-      if @random_mode
-        next_file = @random_selector.next_random_file
-        if next_file
-          @current_index = audio_files.index(next_file)
-          play_current_file if playing?
-        end
-      else
-        @current_index = (@current_index + 1) % audio_files.length
-        play_current_file if playing?
-      end
-    end
-
-    def go_to_previous
-      return if audio_files.empty?
-
-      if @random_mode
-        prev_file = @random_selector.previous_file
-        if prev_file
-          @current_index = audio_files.index(prev_file)
-          play_current_file if playing?
-        end
-      else
-        @current_index = @current_index.zero? ? audio_files.length - 1 : @current_index - 1
-        play_current_file if playing?
-      end
-    end
-
-    # Set up completion callback for natural playback completion
-    #
-    # @return [void]
-    def setup_completion_callback
-      @player.on_completion do |progress|
-        handle_natural_completion(progress)
-      end
-    end
-
-    # Handle natural completion when mpv process terminates
-    #
-    # @param progress [Float] the progress when playback completed
-    # @return [void]
-    def handle_natural_completion(progress)
-      return unless progress >= 0.9
-
-      # Record the completed file in history
-      current_file_path = @player.instance_variable_get(:@current_file)
-      @random_selector.record_played_file(current_file_path) if current_file_path
-
-      # Transition to stopped state
-      stop if playing?
+      player.stop
     end
   end
 end

@@ -8,15 +8,15 @@ module MeditationPlayer
   # Main application controller for the meditation audio player
   #
   # This class coordinates all components of the meditation player:
-  # audio playback, state management, user interface, and persistence.
+  # audio playback, state management, and user interface.
   #
-  # @author Your Name
+  # @author Yevgeny Matveyev
   # @since 1.0.0
   class App
     # Initialize the meditation player application
     #
     # Sets up all necessary components: audio player, state machine,
-    # user interface, and state persistence.
+    # and user interface.
     #
     # @return [App] new instance
     def initialize
@@ -28,7 +28,6 @@ module MeditationPlayer
     # Run the meditation player application
     #
     # Starts the user interface with a fresh random file selection.
-    # Only recently played files are persisted for random selection.
     #
     # @return [void]
     def run

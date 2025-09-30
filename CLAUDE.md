@@ -24,21 +24,31 @@ find tests -name "*_test.rb" -exec ruby -Ilib {} \;
 ruby -Ilib tests/*_test.rb
 
 # Run specific test file
-ruby -Ilib tests/mpv_player_test.rb
-ruby -Ilib tests/player_state_test.rb
-ruby -Ilib tests/random_file_selector_test.rb
+ruby -Ilib tests/unit/mpv_player_test.rb
+ruby -Ilib tests/unit/player_state_test.rb
+ruby -Ilib tests/integration/mpv_player_integration_test.rb
+ruby -Ilib tests/feature/playback_completion_test.rb
+
+# Run tests by category
+ruby -Ilib tests/unit/*_test.rb          # Unit tests
+ruby -Ilib tests/integration/*_test.rb   # Integration tests
+ruby -Ilib tests/feature/*_test.rb      # Feature tests
 
 # Run tests with test helper
 ruby -Ilib tests/test_helper.rb
 
-# Run performance tests
+# Run performance tests (in separate directory)
 find tests/performance_tests -name "*.rb" -exec ruby -Ilib {} \;
 ruby -Ilib tests/performance_tests/performance_test.rb
 ruby -Ilib tests/performance_tests/tui_cpu_test.rb
 ruby -Ilib tests/performance_tests/test_idle_specific.rb
 ruby -Ilib tests/performance_tests/verify_fix.rb
 
-# Run Rubocop on performance tests
+# Run Rubocop on all tests
+bundle exec rubocop tests/
+bundle exec rubocop tests/unit/
+bundle exec rubocop tests/integration/
+bundle exec rubocop tests/feature/
 bundle exec rubocop tests/performance_tests/
 ```
 
@@ -90,16 +100,12 @@ The meditation player follows a modular architecture with clear separation of co
    - Manages transitions between :stopped, :playing, :paused states
    - Handles file navigation (next/previous track)
    - Triggers appropriate MPVPlayer methods during state transitions
+   - Includes random file selection functionality
 
 3. **TUI** (`lib/tui.rb`): Terminal user interface using curses
    - Minimal interface showing current file and playback state
    - Handles keyboard input for controls
    - No progress bar (removed for simplicity)
-
-4. **RandomFileSelector** (`lib/random_file_selector.rb`): Random file selection with session history
-   - Implements 90% rule for excluding recently played files
-   - Maintains persistent recently played history in `tmp/recently_played.json`
-   - Handles session-based navigation (next/previous)
 
 ### Key Design Patterns
 

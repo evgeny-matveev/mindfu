@@ -10,7 +10,7 @@ module MeditationPlayer
   # It displays the current playing file, playback state, and keyboard controls
   # for user interaction.
   #
-  # @author Your Name
+  # @author Yevgeny Matveyev
   # @since 1.0.0
   class TUI
     # Initialize TUI with player state
@@ -39,9 +39,6 @@ module MeditationPlayer
 
       while @running
         current_time = Time.now
-
-        # Check for natural completion when playing
-        @state.check_completion if @state.playing?
 
         # Update display every 250ms when playing, otherwise every 1000ms
         update_interval = @state.playing? ? 0.25 : 1.0
@@ -72,8 +69,6 @@ module MeditationPlayer
     # Processes keyboard input and triggers appropriate state machine events:
     # SPACE - Play/Pause toggle
     # S - Stop playback (physical key position)
-    # N - Next track (physical key position)
-    # P - Previous track (physical key position)
     # Q - Quit application (physical key position)
     #
     # Supports any keyboard layout by checking key positions:
@@ -105,44 +100,12 @@ module MeditationPlayer
         end
       when 115, 139, "s", "S"
         @state.stop
-      when 110, 130, "n", "N"
-        @state.next
-      when 112, 183, "p", "P"
-        @state.previous
       when 113, 185, "q", "Q"
         @running = false
       end
     end
 
     private
-
-    # Draw the progress bar
-    #
-    # Shows a visual progress bar indicating playback progress.
-    #
-    # @return [void]
-    def draw_progress_bar
-      progress = @state.player.current_progress || 0.0
-      progress_bar = format_progress_bar(progress)
-      percentage = (progress * 100).round
-
-      @window.setpos(5, 2)
-      @window.addstr("Progress: #{progress_bar} #{percentage}%")
-    end
-
-    # Format progress as a visual progress bar
-    #
-    # @param progress [Float] progress percentage (0.0 to 1.0)
-    # @return [String] formatted progress bar
-    def format_progress_bar(progress)
-      percentage = progress.clamp(0.0, 1.0)
-      filled = if percentage >= 0.9
-                 10 # Show full bar at 90% (completion threshold)
-               else
-                 (percentage * 10).floor
-               end
-      "[#{'=' * filled}#{' ' * (10 - filled)}]"
-    end
 
     # Initialize curses interface
     #
@@ -178,7 +141,6 @@ module MeditationPlayer
 
       draw_header
       draw_status
-      draw_progress_bar
 
       draw_controls
       draw_footer
@@ -221,8 +183,6 @@ module MeditationPlayer
       controls = [
         "[SPACE] Play/Pause",
         "[S] Stop",
-        "[N] Next",
-        "[P] Previous",
         "[Q] Quit"
       ]
 

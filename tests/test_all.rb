@@ -4,7 +4,15 @@
 require_relative "test_helper"
 
 # Simple script to run all tests
-Dir.glob("tests/*_test.rb").each do |test_file|
+# Find all test files in current directory and subdirectories
+test_files = Dir.glob("**/*_test.rb")
+
+# Also include the ninety_percent_rule_verification.rb file
+if File.exist?("ninety_percent_rule_verification.rb")
+  test_files += ["ninety_percent_rule_verification.rb"]
+end
+
+test_files.each do |test_file|
   puts "Running #{test_file}..."
   system("ruby -Ilib #{test_file}")
   puts "-" * 50
