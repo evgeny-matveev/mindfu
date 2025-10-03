@@ -53,7 +53,7 @@ module MeditationPlayer
     # @param file_path [String] path to audio file
     # @return [void]
     def spawn_mpv(file_path)
-      @mpv_socket = "/tmp/mpvsocket_#{@mpv_socket}"
+      @mpv_socket = "/tmp/mpvsocket_#{object_id}"
       @mpv_pid = spawn("mpv", "--no-video", "--input-ipc-server=#{@mpv_socket}", file_path,
                        :pgroup => true, %i[out err] => "/dev/null")
       @current_file = file_path
