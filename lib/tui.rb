@@ -100,12 +100,10 @@ module MeditationPlayer
         @state.stop
       when 110, 141, "n", "N"
         @state.next
-        @state.stop if @state.playing? || @state.paused?
-        @state.play if @state.stopped?
+        @state.stop
       when 112, 160, "p", "P"
         @state.previous
-        @state.stop if @state.playing? || @state.paused?
-        @state.play if @state.stopped?
+        @state.play
       when 113, 185, "q", "Q"
         @running = false
       end
@@ -182,11 +180,11 @@ module MeditationPlayer
 
     # Draw the recent history
     #
-    # Shows the last 10 played files with timestamps.
+    # Shows the last 7 played files with timestamps.
     #
     # @return [void]
     def draw_history
-      history = @state.formatted_recent_history(10)
+      history = @state.formatted_recent_history(7)
 
       @window.setpos(5, 2)
       if history.any?
@@ -209,7 +207,7 @@ module MeditationPlayer
     # @return [void]
     def draw_controls
       history_size = [@state.formatted_recent_history(10).size, 1].max
-      start_line = 6 + history_size + 1
+      start_line = 6 + history_size + 2
 
       controls = [
         "[SPACE] Play/Pause",
@@ -222,7 +220,7 @@ module MeditationPlayer
       @window.setpos(start_line, 2)
       controls.each_with_index do |control, i|
         @window.addstr(control)
-        @window.setpos(start_line + i, 2) if i < controls.length - 1
+        @window.setpos(start_line + i + 2, 2) if i < controls.length - 1
       end
     end
 
