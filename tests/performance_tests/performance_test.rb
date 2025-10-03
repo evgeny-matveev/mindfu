@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "timeout"
 require_relative "../../lib/meditation_player"
 
 module MeditationPlayer
@@ -54,6 +55,12 @@ module MeditationPlayer
 
       # Start player in background process
       player_pid = fork do
+        # Set up timeout to automatically exit after test duration + buffer
+        Thread.new do
+          sleep(duration_seconds + 5) # Give 5 extra seconds for cleanup
+          exit 0
+        end
+
         player = MeditationPlayer::App.new
         player.run
       end
@@ -72,9 +79,22 @@ module MeditationPlayer
         puts "\nHigh CPU warning!" if results[:average_cpu] > 20
         results
       ensure
-        # Clean up
-        Process.kill("TERM", player_pid) if player_pid
-        Process.wait(player_pid) if player_pid
+        # Clean up - try graceful shutdown first, then force kill
+        if player_pid
+          begin
+            Process.kill("TERM", player_pid)
+            # Wait up to 3 seconds for graceful shutdown
+            Timeout.timeout(3) do
+              Process.wait(player_pid)
+            end
+          rescue Timeout::Error
+            # Force kill if graceful shutdown fails
+            Process.kill("KILL", player_pid)
+            Process.wait(player_pid)
+          rescue Errno::ESRCH
+            # Process already terminated
+          end
+        end
       end
     end
 
@@ -84,6 +104,12 @@ module MeditationPlayer
 
       # Start player in background process
       player_pid = fork do
+        # Set up timeout to automatically exit after test duration + buffer
+        Thread.new do
+          sleep(duration_seconds + 5) # Give 5 extra seconds for cleanup
+          exit 0
+        end
+
         player = MeditationPlayer::App.new
         player.run
       end
@@ -102,9 +128,22 @@ module MeditationPlayer
         puts "Min CPU: #{results[:min_cpu].round(2)}%"
         results
       ensure
-        # Clean up
-        Process.kill("TERM", player_pid) if player_pid
-        Process.wait(player_pid) if player_pid
+        # Clean up - try graceful shutdown first, then force kill
+        if player_pid
+          begin
+            Process.kill("TERM", player_pid)
+            # Wait up to 3 seconds for graceful shutdown
+            Timeout.timeout(3) do
+              Process.wait(player_pid)
+            end
+          rescue Timeout::Error
+            # Force kill if graceful shutdown fails
+            Process.kill("KILL", player_pid)
+            Process.wait(player_pid)
+          rescue Errno::ESRCH
+            # Process already terminated
+          end
+        end
       end
     end
 

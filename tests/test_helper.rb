@@ -5,6 +5,9 @@ require "minitest/pride"
 require "fileutils"
 require_relative "../lib/meditation_player"
 
+# Set test environment variable
+ENV["TEST"] = "true"
+
 module MeditationPlayer
   class Test < Minitest::Test
     def setup

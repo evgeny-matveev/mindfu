@@ -3,6 +3,7 @@
 require_relative "mpv_player"
 require_relative "player_state"
 require_relative "tui"
+require_relative "db"
 
 module MeditationPlayer
   # Main application controller for the meditation audio player
@@ -16,14 +17,20 @@ module MeditationPlayer
     # Initialize the meditation player application
     #
     # Sets up all necessary components: audio player, state machine,
-    # and user interface.
+    # database, and user interface.
     #
     # @return [App] new instance
     def initialize
       @player = MPVPlayer.new
-      @state = PlayerState.new(@player)
+      @db = DB.new
+      @state = PlayerState.new(@player, @db)
       @tui = TUI.new(@state)
     end
+
+    # Get the player state
+    #
+    # @return [PlayerState] the current player state
+    attr_reader :state
 
     # Run the meditation player application
     #
@@ -34,6 +41,7 @@ module MeditationPlayer
       @tui.run
     ensure
       @state.stop
+      @db&.close
     end
   end
 end

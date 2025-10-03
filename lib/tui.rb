@@ -13,10 +13,6 @@ module MeditationPlayer
   # @author Yevgeny Matveyev
   # @since 1.0.0
   class TUI
-    # Initialize TUI with player state
-    #
-    # @param state [PlayerState] the player state to display
-    # @return [TUI] new instance
     def initialize(state)
       @state = state
       @window = nil
@@ -69,6 +65,8 @@ module MeditationPlayer
     # Processes keyboard input and triggers appropriate state machine events:
     # SPACE - Play/Pause toggle
     # S - Stop playback (physical key position)
+    # N - Next track (physical key position)
+    # P - Previous track (physical key position)
     # Q - Quit application (physical key position)
     #
     # Supports any keyboard layout by checking key positions:
@@ -100,6 +98,14 @@ module MeditationPlayer
         end
       when 115, 139, "s", "S"
         @state.stop
+      when 110, 141, "n", "N"
+        @state.next
+        @state.stop if @state.playing? || @state.paused?
+        @state.play if @state.stopped?
+      when 112, 160, "p", "P"
+        @state.previous
+        @state.stop if @state.playing? || @state.paused?
+        @state.play if @state.stopped?
       when 113, 185, "q", "Q"
         @running = false
       end
@@ -133,7 +139,7 @@ module MeditationPlayer
     # Draw the complete user interface
     #
     # Clears the screen and draws all UI components:
-    # header, status, progress bar, controls, and footer.
+    # header, status, history, controls, and footer.
     #
     # @return [void]
     def draw
@@ -141,7 +147,7 @@ module MeditationPlayer
 
       draw_header
       draw_status
-
+      draw_history
       draw_controls
       draw_footer
 
@@ -174,22 +180,49 @@ module MeditationPlayer
       @window.addstr("State: #{state}")
     end
 
+    # Draw the recent history
+    #
+    # Shows the last 10 played files with timestamps.
+    #
+    # @return [void]
+    def draw_history
+      history = @state.formatted_recent_history(10)
+
+      @window.setpos(5, 2)
+      if history.any?
+        @window.addstr("Recent History:")
+
+        history.each_with_index do |entry, i|
+          line = "#{entry[:rank]}. #{entry[:filename]} — #{entry[:time_ago]}"
+          @window.setpos(6 + i, 4)
+          @window.addstr(line[0, Curses.cols - 6]) # Truncate if too long
+        end
+      else
+        @window.addstr("Recent History: None")
+      end
+    end
+
     # Draw the control instructions
     #
     # Displays the available keyboard controls for the user.
     #
     # @return [void]
     def draw_controls
+      history_size = [@state.formatted_recent_history(10).size, 1].max
+      start_line = 6 + history_size + 1
+
       controls = [
         "[SPACE] Play/Pause",
+        "[N] Next",
+        "[P] Previous",
         "[S] Stop",
         "[Q] Quit"
       ]
 
-      @window.setpos(7, 2)
+      @window.setpos(start_line, 2)
       controls.each_with_index do |control, i|
         @window.addstr(control)
-        @window.setpos(7 + i, 2) if i < controls.length - 1
+        @window.setpos(start_line + i, 2) if i < controls.length - 1
       end
     end
 

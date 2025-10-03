@@ -26,11 +26,12 @@ module MeditationPlayer
       @current_file = nil
       @playing = false
       @paused = false
+      @completion_callback = nil
+      @monitor_thread = nil
+      @progress_callback = nil
+      @last_progress_percentage = 0
     end
 
-    # Get list of available audio files
-    #
-    # @return [Array<String>] array of audio file paths
     def audio_files
       @audio_files ||= Dir.glob(File.join(AUDIO_DIR, "*.{mp3,mp4,wav,ogg}"))
     end
@@ -52,17 +53,17 @@ module MeditationPlayer
     # @param file_path [String] path to audio file
     # @return [void]
     def spawn_mpv(file_path)
-      @mpv_socket = "/tmp/mpvsocket_#{object_id}"
+      @mpv_socket = "/tmp/mpvsocket_#{@mpv_socket}"
       @mpv_pid = spawn("mpv", "--no-video", "--input-ipc-server=#{@mpv_socket}", file_path,
                        :pgroup => true, %i[out err] => "/dev/null")
       @current_file = file_path
       @playing = true
       @paused = false
+
+      # Start monitoring playback events
+      start_playback_monitoring
     end
 
-    # Stop currently playing audio
-    #
-    # @return [void]
     def stop
       terminate_mpv_process
     end
@@ -81,9 +82,6 @@ module MeditationPlayer
       @paused
     end
 
-    # Pause currently playing audio
-    #
-    # @return [void]
     def pause
       return unless playing?
 
@@ -91,9 +89,6 @@ module MeditationPlayer
       @paused = true
     end
 
-    # Resume paused audio
-    #
-    # @return [void]
     def resume
       return unless paused?
 
@@ -101,9 +96,6 @@ module MeditationPlayer
       @paused = false
     end
 
-    # Get the filename of currently playing audio
-    #
-    # @return [String, nil] filename or nil if not playing
     def current_file
       @current_file ? File.basename(@current_file) : nil
     end
@@ -168,6 +160,10 @@ module MeditationPlayer
       @current_file = nil
       @playing = false
       @paused = false
+
+      # Stop monitoring thread
+      @monitor_thread&.kill
+      @monitor_thread = nil
     end
 
     # Check if a specific process is running
@@ -201,6 +197,109 @@ module MeditationPlayer
     def get_mpv_property(property)
       response = send_command("get_property", property)
       response && response["data"]
+    end
+
+    # Set completion callback
+    #
+    # Sets a callback to be invoked when playback completes naturally.
+    #
+    # @param callback [Proc] callback procedure to invoke on completion
+    # @return [void]
+    #
+    # @example Set completion callback
+    #   player.set_completion_callback(-> { puts "Playback completed!" })
+    public
+
+    def set_completion_callback(&callback)
+      @completion_callback = callback
+    end
+
+    # Set progress callback
+    #
+    # Sets a callback to be invoked when playback reaches certain percentages.
+    #
+    # @param callback [Proc] callback procedure to invoke with progress info
+    # @return [void]
+    #
+    # @example Set progress callback
+    #   player.set_progress_callback { |percentage| puts "Progress: #{percentage}%" }
+    def set_progress_callback(&callback)
+      @progress_callback = callback
+    end
+
+    # Check if playback is completed
+    #
+    # @return [Boolean] true if playback has reached the end, false otherwise
+    def playback_completed?
+      return false unless @mpv_socket
+
+      # Check if playback has reached the end
+      time_pos = get_mpv_property("time-pos")
+      duration = get_mpv_property("duration")
+
+      time_pos && duration && time_pos >= duration
+    end
+
+    # Get current playback position
+    #
+    # @return [Float, nil] current playback position in seconds, or nil if not playing
+    def current_position
+      get_mpv_property("time-pos")
+    end
+
+    # Get total duration
+    #
+    # @return [Float, nil] total duration in seconds, or nil if not available
+    def total_duration
+      get_mpv_property("duration")
+    end
+
+    private
+
+    # Start monitoring playback events
+    #
+    # @return [void]
+    def start_playback_monitoring
+      return if @monitor_thread&.alive?
+
+      @monitor_thread = Thread.new do
+        loop do
+          break unless @mpv_pid && @mpv_socket
+
+          # Check if playback has completed naturally
+          if playback_completed?
+            @playing = false
+            @paused = false
+            @completion_callback&.call
+            break
+          end
+
+          # Track progress and call callback at 50% threshold
+          if @progress_callback && @playing && !@paused
+            current_pos = current_position
+            total_dur = total_duration
+
+            if current_pos && total_dur && total_dur.positive?
+              percentage = (current_pos / total_dur * 100).to_i
+
+              # Call callback at 50% threshold only
+              if percentage >= 50 && @last_progress_percentage < 50
+                @progress_callback.call(50)
+                @last_progress_percentage = 50
+              end
+            end
+          end
+
+          # Check if process is still running
+          unless mpv_process_running?
+            @playing = false
+            @paused = false
+            break
+          end
+
+          sleep 0.5 # Check every half second
+        end
+      end
     end
   end
 end
