@@ -14,5 +14,6 @@ group :development do
   gem "rubocop", "~> 1.60"
   gem "rubocop-minitest", "~> 0.35"
   gem "rubocop-performance", "~> 1.20"
+  gem "solargraph"
   gem "yard", "~> 0.9.36"
 end
